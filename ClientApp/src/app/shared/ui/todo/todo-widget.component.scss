@@ -1,0 +1,29 @@
+.headline {
+  font-weight: 500;
+  font-size: 18px;
+  color: #262625cf;
+  padding: 0px 4px;
+  margin-bottom: 6px;
+}
+
+.body {
+
+  .checkboxWrapper {
+    display: flex;
+    margin: 3px 0px;
+    padding: 3px 4px;
+    color: #040404a8;
+
+    &:not(:last-of-type) {
+      border-bottom: 1px solid #d3d3d375;
+    }
+
+    .label {
+      padding-left: 8px;
+
+      .title {
+        margin-right: 4px;
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
 <div
   nz-popover
-  [nzPopoverTitle]="(wording.notifications | translate)"
+  [nzPopoverTitle]="title"
   nzOverlayClassName="logs"
   class="notifications"
   [nzContent]="logsList"
@@ -12,19 +12,21 @@
   <nz-badge
     [nzCount]="unseenCount$ | async"
     [nzStyle]="{
-    'background-color': '#46bdca',
-    border: 'none',
-    'box-shadow': 'none',
-    display: !(unseenCount$ | async) ? 'none' : 'initial'
+      'background-color': notificationColor,
+      border: 'none',
+      'box-shadow': 'none',
+      display: !(unseenCount$ | async) ? 'none' : 'initial'
   }"
   >
     <i
       nz-icon
-      nzType="bell"
+      [nzType]="icon"
       class="notification-icon"
     ></i>
   </nz-badge>
 </div>
+
+
 
 <ng-template #logsList>
   <div class='fb popover-content'>
@@ -45,12 +47,14 @@
       [ngClass]="{'unseen-notification': log.unseen}"
     >
 
+
+
       <div class='fb avatar-wrapper'>
         <!-- <nv-mini-avatar [user]="log.user"></nv-mini-avatar> -->
       </div>
       <div class='fb content'>
         <div class='fb extra-info'>
-          <div class='fb date'>{{ log.date | date }}</div>
+          <div class='fb date'>{{ log.date | date: ((settingsService.locale | async) | dateFormat) }}</div>
         </div>
         <div
           class="fb message"

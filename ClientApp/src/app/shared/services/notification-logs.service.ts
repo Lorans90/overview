@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
-import * as moment from 'moment';
-import { Log } from '../ui/notification-logs/notification-logs.component';
+import { Log, LogType } from '../models/log.model';
 
 
 export const logs: Log[] = [
@@ -11,23 +10,10 @@ export const logs: Log[] = [
       de: 'Lorem ipsum'
     },
     subject: 'lorem ipsum',
-    // user: {
-    //   id: 1,
-    //   _type: 'User',
-    //   isActive: true,
-    //   firstName: 'Felix',
-    //   lastName: 'Küppers',
-    //   displayName: 'Felix Küppers',
-    //   tel: '333444',
-    //   language: Language.EN,
-    //   email: 'kueppers@avetiq.de',
-    //   username: 'Admin',
-    //   isSuperAdmin: false,
-    //   isAdmin: false,
-    // },
     date: new Date(),
     unseen: true,
     id: 0,
+    type: LogType.error
   },
   {
     message: {
@@ -35,23 +21,10 @@ export const logs: Log[] = [
       de: 'Aenean commodo'
     },
     subject: 'Aenean commodo ',
-    // user: {
-    //   id: 1,
-    //   _type: 'User',
-    //   isActive: true,
-    //   firstName: 'Felix',
-    //   lastName: 'Küppers',
-    //   displayName: 'Felix Küppers',
-    //   tel: '333444',
-    //   language: Language.EN,
-    //   email: 'kueppers@avetiq.de',
-    //   username: 'Admin',
-    //   isSuperAdmin: false,
-    //   isAdmin: false,
-    // },
     date: new Date(),
     unseen: true,
     id: 2,
+    type: LogType.warning
   },
   {
     message: {
@@ -59,23 +32,11 @@ export const logs: Log[] = [
       de: 'consectetuer adipiscing elit.'
     },
     subject: 'consectetuer elit.',
-    // user: {
-    //   id: 1,
-    //   _type: 'User',
-    //   isActive: true,
-    //   firstName: 'Felix',
-    //   lastName: 'Küppers',
-    //   displayName: 'Felix Küppers',
-    //   language: Language.EN,
-    //   tel: '333444',
-    //   email: 'kueppers@avetiq.de',
-    //   username: 'Admin',
-    //   isSuperAdmin: false,
-    //   isAdmin: false,
-    // },
     date: new Date(),
     unseen: true,
     id: 3,
+    type: LogType.notification
+
   }
 ];
 
@@ -101,16 +62,17 @@ export class NotificationLogsService {
     const log: Log = {
       message: logsInfo.message,
       subject: logsInfo.subject,
-      // user: logsInfo.user ? logsInfo.user : this.authService.getUser(),
       date: new Date(),
       unseen: true,
       id: this.logs.length + 1,
-      // _type: 'log'
+      type: logsInfo.type
     };
     this.publishLogs([log, ...this.logs]);
   }
 
-  public markAsSeen = (): void => {
-    this.publishLogs(this.logs.map(log => ({ ...log, unseen: false })));
+  public markAsSeen = (type: LogType): void => {
+    this.publishLogs(
+      this.logs.map(log => log.type === type ? ({ ...log, unseen: false }) : log)
+    );
   }
 }

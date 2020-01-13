@@ -1,4 +1,4 @@
-import { NgModule, ErrorHandler } from '@angular/core';
+import { NgModule, ErrorHandler, APP_INITIALIZER } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -12,6 +12,7 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { GlobalErrorHandler } from './core/handlers/error.handler';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
+import { APP_CONFIG, AppConfig, ApiConfigService } from './core';
 
 registerLocaleData(localeDE);
 registerLocaleData(localeUK);
@@ -28,8 +29,18 @@ registerLocaleData(localeUS);
     BrowserAnimationsModule,
   ],
   providers: [
+    {
+      provide: APP_CONFIG,
+      useValue: AppConfig
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (config: ApiConfigService) => () => config.loadApiConfig(),
+      deps: [ApiConfigService],
+      multi: true
+    },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    { provide: ErrorInterceptor, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
   ],
   bootstrap: [AppComponent]

@@ -1,26 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { GridsterComponent, GridsterConfig, GridType, CompactType, DisplayGrid, GridsterItem } from 'angular-gridster2';
 import { BehaviorSubject } from 'rxjs';
 import * as uuid from 'uuid';
-
-export enum WidgetType {
-  Clock = 0,
-  Weather = 1,
-  Bookmark = 2,
-  Todo = 3,
-  Currency = 4,
-  Steps = 5,
-  Circles = 6,
-  Bars = 7,
-  Chart = 8,
-  Feed = 9
-}
-
-export interface Widget {
-  type: WidgetType;
-  name: string;
-  icon: string;
-}
+import { DataService } from 'src/app/shared/services/data.service';
+import { Widget } from 'src/app/shared/models/widget.model';
+import { WidgetType } from 'src/app/shared/enums/widgets.enum';
 
 @Component({
   selector: 'app-dashboard',
@@ -29,7 +13,7 @@ export interface Widget {
 })
 
 
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   @ViewChild('grid', { static: true }) grid: GridsterComponent;
   public dashboardWidgetItems: BehaviorSubject<GridsterItem[]> = new BehaviorSubject<GridsterItem[]>(this.getItems()
   );
@@ -101,10 +85,11 @@ export class DashboardComponent implements OnInit {
 
 
   ];
-  constructor() { }
+  constructor(private dataService: DataService) { }
 
   ngOnInit() {
     this.dashboardWidgetItems.subscribe(items => this.saveItems(items));
+    this.dataService.startConnection();
   }
 
   private getItems(): GridsterItem[] {
@@ -156,4 +141,7 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  ngOnDestroy() {
+    this.dataService.stopConnection();
+  }
 }

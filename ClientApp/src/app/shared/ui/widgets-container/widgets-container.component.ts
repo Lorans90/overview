@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { GridsterItem } from 'angular-gridster2';
-import { WidgetType } from 'src/app/pages/welcome/dashboard/dashboard.component';
+import { WidgetType } from '../../enums/widgets.enum';
 
 @Component({
   selector: 'app-widgets-container',

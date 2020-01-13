@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { NzNotificationService } from 'ng-zorro-antd';
 import { SettingsService } from './settings.service';
-import { Wording } from '../models/wording';
+import { Wording } from '../models/wording.model';
 
 export interface Notification {
     type: NotificationType;

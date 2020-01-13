@@ -4,6 +4,7 @@ import { WelcomeComponent } from './welcome.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { OverviewComponent } from './overview/overview.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
+import { UnsavedChangesGuard } from 'src/app/shared/guards/unsaved-changes.guard';
 
 const routes: Routes = [
   {
@@ -26,6 +27,7 @@ const routes: Routes = [
       {
         path: 'change-password',
         component: ChangePasswordComponent,
+        canDeactivate: [UnsavedChangesGuard]
       },
     ]
   }];

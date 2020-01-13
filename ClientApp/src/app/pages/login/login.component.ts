@@ -1,9 +1,9 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { of, Observable, Observer } from 'rxjs';
 import { wording } from 'src/app/core/wording';
-import { AuthService, Tokens } from 'src/app/shared/services/auth.service';
+import { AuthService } from 'src/app/shared/services/auth.service';
+import { Tokens } from 'src/app/shared/models/tokens.model';
 
 /**
  * Test Comment For Docs
@@ -39,20 +39,6 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  // public signInAction = (): NvAction => {
-  //   return ({
-  //     action$: () => this.getActionObservable(),
-  //     subscribe: (response: IDataResponseBody<SessionInfo>) =>
-  //       this.authService.handleSessionInfoResponse(
-  //         response,
-  //         this.redirectUrl
-  //       )
-  //   });
-  // }
-
-  // private getActionObservable(): Observable<IDataResponseBody<SessionInfo>> {
-  //   return this.authService.login(this.form.value);
-  // }
   login() {
     this.authService.login(this.form.value).subscribe((tokens: Tokens) => {
       this.authService.storeToken({ accessToken: tokens.accessToken, refreshToken: tokens.refreshToken });

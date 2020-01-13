@@ -1,6 +1,7 @@
 .notifications {
   cursor: pointer;
   position: relative;
+  padding: 0px 7px 0 7px;
 
   .unseen-notificiation-count {
     position: absolute;
@@ -111,8 +112,4 @@
 
 .unseen-notification {
   background-color: #e6eff8;
-}
-
-:host ::ng-deep .ant-popover-placement-bottomRight>.ant-popover-content>.ant-popover-arrow {
-  right: 9px !important;
 }

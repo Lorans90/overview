@@ -1,0 +1,18 @@
+<div class="main">
+  <div class="headline">{{ wording.todo | translate }}</div>
+  <div class="body">
+    <div
+      class="checkboxWrapper"
+      *ngFor="let todo of todos; let index=index"
+    >
+      <label
+        nz-checkbox
+        [ngModel]="index % 2 === 0"
+      ></label>
+      <div class="label">
+        <b class="title">{{ todo.title }}</b>
+        <span class="text">{{ todo.text }}</span>
+      </div>
+    </div>
+  </div>
+</div>

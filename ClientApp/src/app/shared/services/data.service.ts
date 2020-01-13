@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import * as signalR from '@aspnet/signalr';
 import { BehaviorSubject } from 'rxjs';
+import { APP_CONFIG, IAppConfig } from 'src/app/core';
 
 export interface Data {
     machine1: number;
@@ -24,13 +25,15 @@ export class DataService {
     dataSubject = new BehaviorSubject<Data>(emptyData);
     data$ = this.dataSubject.asObservable();
 
-    constructor() {
+    constructor(
+        @Inject(APP_CONFIG) private appConfig: IAppConfig) {
+
         this.startConnection();
         this.addTransferChartDataListener();
     }
     public startConnection = () => {
         this.hubConnection = new signalR.HubConnectionBuilder()
-            .withUrl('http://localhost:5000/realtime')
+            .withUrl(`http://localhost:5000/realtime`)
             .build();
 
         this.hubConnection
@@ -43,5 +46,12 @@ export class DataService {
         this.hubConnection.on('BroadcastMessage', (data: Data) => {
             this.dataSubject.next(data);
         });
+    }
+
+    public stopConnection = () => {
+        this.hubConnection
+            .stop()
+            .then(() => console.log('Connection ended'))
+            .catch(err => console.log('Error while stopping connection: ' + err));
     }
 }

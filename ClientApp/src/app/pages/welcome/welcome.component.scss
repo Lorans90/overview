@@ -1,12 +1,8 @@
-/* :host {
-    overflow: auto;
-} */
 .menu-sidebar {
   position: relative;
   z-index: 10;
   box-shadow: 2px 0 6px rgba(0, 21, 41, .35);
 }
-
 
 .trigger {
   font-size: 30px;
@@ -80,27 +76,6 @@ nz-header {
   display: flex;
 }
 
-/* .en-button {
-    background: url(../assets/images/english.svg) no-repeat;
-  }
-
-  .de-button {
-    background: url(../assets/images/german.svg) no-repeat;
-  } */
-/*
-  .de-button,
-  .en-button {
-    background-size: 185% 183%;
-    background-position: 30% 1%;
-    border: none;
-    cursor: default;
-    width: 45px;
-    padding: 0;
-    margin: 0 10px 0 0;
-  } */
-
-
-
 .language,
 .right {
   display: flex;
@@ -129,4 +104,15 @@ nz-header {
   color: white;
   top: 100%;
   position: sticky;
+}
+
+li.active {
+  background-color: #004280 !important;
+  border-right: 6px #0084ff solid !important;
+
+}
+
+.ant-menu.ant-menu-dark .ant-menu-item-selected,
+.ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected {
+  background-color: unset;
 }

@@ -1,6 +1,11 @@
-<div class="btn-edit">
+<app-grid
+  [options]="options"
+  [items]="dashboardWidgetItems | async"
+  [editMode]="editMode | async"
+  (deleteWidget)="deleteWidget($event)"
+></app-grid>
+<div class="edit-save-buttons">
   <button
-    class="settings-dropdown-btn"
     nz-button
     nz-dropdown
     [nzDropdownMenu]="menu"
@@ -42,9 +47,3 @@
     ></i>
   </button>
 </div>
-<app-grid
-  [options]="options"
-  [items]="dashboardWidgetItems | async"
-  [editMode]="editMode | async"
-  (deleteWidget)="deleteWidget($event)"
-></app-grid>

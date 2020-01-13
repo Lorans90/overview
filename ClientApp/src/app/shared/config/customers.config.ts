@@ -6,7 +6,7 @@ import {
     NvGridRowSelectionType,
     NvOperation
 } from 'nv-grid/src/public_api';
-import { Customer } from '../models/customer';
+import { Customer } from '../models/customer.model';
 import { FormGroup, Validators } from '@angular/forms';
 
 
@@ -37,7 +37,6 @@ export const customersGridConfig = (actions?: {
         showSaveChangesButton: true,
         allowJumpToNextCellIfInvalid: true,
     },
-    disableHighlightingCell: false,
     paging: {
         pageNumber: 1,
         pageSize: 25

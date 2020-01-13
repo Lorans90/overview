@@ -4,14 +4,14 @@ import { customersGridConfig } from 'src/app/shared/config/customers.config';
 import { Language, SettingsService } from 'src/app/shared/services/settings.service';
 import { wording } from 'src/app/core/wording';
 import { NvGridI18nService } from 'nv-grid/src/public_api';
-import { Router } from '@angular/router';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { BehaviorSubject } from 'rxjs';
+import { LogType } from 'src/app/shared/models/log.model';
 
 @Component({
   selector: 'app-welcome',
   templateUrl: './welcome.component.html',
-  styleUrls: ['./welcome.component.css'],
+  styleUrls: ['./welcome.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WelcomeComponent implements OnInit, OnDestroy {
@@ -24,6 +24,7 @@ export class WelcomeComponent implements OnInit, OnDestroy {
   wording = wording;
   time = new BehaviorSubject<Date>(new Date());
   timer: any;
+  LogType = LogType;
 
   constructor(
     public settingsService: SettingsService,

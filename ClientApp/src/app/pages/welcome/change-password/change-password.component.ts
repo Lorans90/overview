@@ -12,7 +12,7 @@ import { AuthService } from 'src/app/shared/services/auth.service';
 })
 export class ChangePasswordComponent implements OnInit {
   wording = wording;
-  public changePaswordForm = new FormGroup({
+  public form = new FormGroup({
     oldPassword: new FormControl(null, { validators: [Validators.required] }),
     newPassword: new FormControl(null, { validators: [Validators.required, Validators.minLength(4)] }),
     confirmPassword: new FormControl(null, {
@@ -23,7 +23,7 @@ export class ChangePasswordComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private authService: AuthService
+    private authService: AuthService,
   ) { }
 
   passwordMatchValidator(control: AbstractControl): { [key: string]: any } {
@@ -36,23 +36,23 @@ export class ChangePasswordComponent implements OnInit {
   ngOnInit() { }
 
   submitForm() {
-    this.userService.changePassword(this.changePaswordForm.value)
+    this.userService.changePassword(this.form.value)
       .subscribe(() => {
-        this.authService.refreshToken().subscribe();
-        this.changePaswordForm.reset();
+        this.form.reset();
+        this.authService.forceLogout();
       });
     // this.messageboxService.showNotification('Neues Passwort wurde gespeichert', '', 'success');
   }
   validateConfirmPassword(): void {
-    setTimeout(() => this.changePaswordForm.controls.confirmPassword.updateValueAndValidity());
+    setTimeout(() => this.form.controls.confirmPassword.updateValueAndValidity());
   }
 
   resetForm(e: MouseEvent): void {
     e.preventDefault();
-    this.changePaswordForm.reset();
-    Object.keys(this.changePaswordForm.controls).forEach(key => {
-      this.changePaswordForm.controls[key].markAsPristine();
-      this.changePaswordForm.controls[key].updateValueAndValidity();
+    this.form.reset();
+    Object.keys(this.form.controls).forEach(key => {
+      this.form.controls[key].markAsPristine();
+      this.form.controls[key].updateValueAndValidity();
     });
   }
 }

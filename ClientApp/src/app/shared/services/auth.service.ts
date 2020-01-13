@@ -1,25 +1,25 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient, HttpResponse, HttpHeaders } from '@angular/common/http';
 import { map, tap, shareReplay } from 'rxjs/operators';
+import { IAppConfig, APP_CONFIG, ApiConfigService } from 'src/app/core';
+import { Tokens } from '../models/tokens.model';
+import { User } from '../models/user.model';
+import { LoginUser } from '../models/login-user.model';
+import { Router } from '@angular/router';
 
-export interface Tokens {
-    accessToken: string;
-    refreshToken: string;
-}
-
-export interface User {
-    username: string;
-    password: string;
-    rememberMe: boolean;
-}
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
     private localStorageKey = 'tokens';
 
-    constructor(private httpClient: HttpClient) { }
+    constructor(
+        private httpClient: HttpClient,
+        @Inject(APP_CONFIG) private appConfig: IAppConfig,
+        private apiConfigService: ApiConfigService,
+        private router: Router
+    ) { }
 
     isLoggedIn(): string {
         return localStorage.getItem(this.localStorageKey);
@@ -28,9 +28,9 @@ export class AuthService {
     // public login(user?: User): Observable<Tokens> {
     //     return this.httpClient.post<Tokens>('http://localhost:5000/api/user-account/login', { user });
     // }
-    login(credentials: User): Observable<any> {
+    login(credentials: LoginUser): Observable<any> {
         const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-        return this.httpClient.post<Tokens>('http://localhost:5000/api/v1/Template/Account/Login',
+        return this.httpClient.post<Tokens>(`${this.appConfig.apiEndpoint}/${this.apiConfigService.configuration.loginPath}`,
             credentials, { headers });
     }
     public storeToken(tokens: Tokens): void {
@@ -45,6 +45,11 @@ export class AuthService {
         this.clear();
     }
 
+    public forceLogout() {
+        this.router.navigate(['login'], {
+            state: { systemAction: true }
+        }).then(navigated => navigated && this.logout());
+    }
 
     public getTokens(): Tokens {
         const tokensString = localStorage.getItem('tokens') as string;
@@ -62,7 +67,8 @@ export class AuthService {
 
     public refreshToken = (): Observable<Tokens> => {
         const refreshToken = this.getTokens().refreshToken;
-        return this.httpClient.post('http://localhost:5000/api/v1/Template/Account/RefreshToken', { refreshToken })
+        return this.httpClient
+            .post(`${this.appConfig.apiEndpoint}/${this.apiConfigService.configuration.refreshTokenPath}`, { refreshToken })
             .pipe(
                 map(response => response || {}),
                 tap((response: Tokens) => this.storeToken(response)),

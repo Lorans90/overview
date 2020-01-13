@@ -1,4 +1,4 @@
-import { Wording } from '../shared/models/wording';
+import { Wording } from '../shared/models/wording.model';
 
 export const wording: { [word: string]: Wording } = {
     dashboard: { en: 'Dashboard', de: 'Dashboard' },

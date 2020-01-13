@@ -14,9 +14,6 @@ export class DateFormatPipe implements PipeTransform {
     DATE_TIME_FMT_US = `${this.DATE_FMT_US} h:mm:ss a`;
     DATE_TIME_FMT_GB = `${this.DATE_FMT_GB} h:mm:ss a`;
 
-    constructor(private settingsService: SettingsService) {
-    }
-
     transform(locale: Locale): string | null {
         return locale === 'en-GB'
             ? this.DATE_TIME_FMT_GB

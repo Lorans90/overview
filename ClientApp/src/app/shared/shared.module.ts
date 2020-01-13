@@ -20,6 +20,8 @@ import { FeedComponent } from './ui/feed/feed.component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { NotificationLogsComponent } from './ui/notification-logs/notification-logs.component';
 import { GoogleChartsModule } from 'angular-google-charts';
+import { UnsavedChangesGuard } from './guards/unsaved-changes.guard';
+import { TodoWidgetComponent } from './ui/todo/todo-widget.component';
 
 @NgModule({
     declarations: [
@@ -31,6 +33,7 @@ import { GoogleChartsModule } from 'angular-google-charts';
         BarsComponent,
         ChartComponent,
         WidgetsContainerComponent,
+        TodoWidgetComponent,
         FeedComponent,
         NotificationLogsComponent],
     imports: [
@@ -41,7 +44,6 @@ import { GoogleChartsModule } from 'angular-google-charts';
         NgZorroAntdModule,
         RouterModule,
         NgZorroAntdModule,
-        ScrollingModule,
         HttpClientModule,
         GoogleChartsModule.forRoot(),
         NvGridModule.forRoot({ language: 'en' }),
@@ -69,12 +71,10 @@ export class SharedModule {
             providers: [
                 RouteGuard,
                 LoginGuard,
+                UnsavedChangesGuard,
                 {
                     provide: NZ_I18N,
                     useValue: de_DE
-                },
-                {
-                    provide: GRID_GLOBAL_CONFIG, useValue: FAKE_GridGlobalConfig,
                 },
                 DatePipe, DecimalPipe, CurrencyPipe
             ],

@@ -1,20 +1,10 @@
-import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, Input } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { Wording } from '../../models/wording';
 import { NotificationLogsService } from '../../services/notification-logs.service';
 import { wording } from 'src/app/core/wording';
-
-export interface LogInfo {
-  message: Wording;
-  subject: string;
-}
-export interface Log {
-  message: Wording;
-  date: Date;
-  subject: string;
-  unseen?: boolean;
-  id: number;
-}
+import { Log, LogType } from '../../models/log.model';
+import { SettingsService } from '../../services/settings.service';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-notification-logs',
@@ -23,26 +13,33 @@ export interface Log {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NotificationLogsComponent implements OnInit {
-  public logs: Observable<Log[]> = this.notificationLogsService.logs$;
+  public logs: Observable<Log[]>;
   public unseenCountSubject = new BehaviorSubject<number>(0);
   public unseenCount$: Observable<number> = this.unseenCountSubject.asObservable();
   public visible: boolean;
   public wording = wording;
-
-  constructor(private notificationLogsService: NotificationLogsService) { }
+  @Input() notificationColor = '#46bdca';
+  @Input() icon: 'bell';
+  @Input() title = 'Logs';
+  @Input() logType: LogType;
+  constructor(
+    private notificationLogsService: NotificationLogsService,
+    public settingsService: SettingsService
+  ) { }
 
   ngOnInit(): void {
-    this.notificationLogsService
-      .logs$
-      .subscribe(activityLogs => this.unseenCountSubject.next(
-        activityLogs.filter(log => log.unseen).length
-      ));
 
+
+    this.logs = this.notificationLogsService.logs$.pipe(
+      map(logs => logs.filter(log => log.type === this.logType)),
+    );
+
+    this.logs.subscribe((logs => this.unseenCountSubject.next(logs.filter(log => log.unseen).length)));
   }
 
   public popoverVisibilityChanged(isOpened: boolean): void {
     if (!isOpened) {
-      this.notificationLogsService.markAsSeen();
+      this.notificationLogsService.markAsSeen(this.logType);
     }
   }
 

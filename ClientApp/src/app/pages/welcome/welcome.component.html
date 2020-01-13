@@ -31,7 +31,7 @@
           <ul>
             <li
               nz-menu-item
-              nzMatchRouter
+              routerLinkActive="active"
             >
               <a routerLink="/welcome/dashboard">
                 <i
@@ -43,13 +43,9 @@
             </li>
             <li
               nz-menu-item
-              nzMatchRouter
+              routerLinkActive="active"
             >
-
-
-
-
-            <a routerLink="/welcome/overview">
+              <a routerLink="/welcome/overview">
                 <i
                   nz-icon
                   nzType="eye"
@@ -59,9 +55,9 @@
             </li>
             <li
               nz-menu-item
-              nzMatchRouter
+              routerLinkActive="active"
             >
-              <a>
+              <a routerLink="/welcome/workplace">
                 <i
                   nz-icon
                   nzType="shop"
@@ -80,10 +76,10 @@
           <ul>
             <li
               nz-menu-item
-              nzMatchRouter
+              routerLinkActive="active"
             >
-            <a routerLink="/welcome/change-password">
-              <i
+              <a routerLink="/welcome/change-password">
+                <i
                   nz-icon
                   nzType="lock"
                 ></i>
@@ -106,12 +102,26 @@
             [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
             (click)="isCollapsed = !isCollapsed"
           ></i>
-
-
-
-
           <div class="right">
-            <app-notification-logs></app-notification-logs>
+            <app-notification-logs
+              [title]="wording.errors | translate"
+              notificationColor="red"
+              icon="close"
+              [logType]="LogType.error"
+            ></app-notification-logs>
+            <app-notification-logs
+              [title]="wording.warnings | translate"
+              notificationColor="orange"
+              icon="warning"
+              [logType]="LogType.warning"
+
+            ></app-notification-logs>
+            <app-notification-logs
+              icon="bell"
+              [title]="wording.notifications | translate"
+              [logType]="LogType.notification"
+
+            ></app-notification-logs>
             <div class="language">
               <a
                 [ngClass]="{'transparent': (settingsService.language | async ) === Language.en}"
@@ -141,6 +151,7 @@
             </div>
             <a
               routerLink="/login"
+              routerLinkActive="active"
               class="logout"
               (click)="logout()"
             >
