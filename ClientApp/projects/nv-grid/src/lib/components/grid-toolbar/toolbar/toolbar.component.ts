@@ -4,13 +4,12 @@ import { NvGridConstants, NvToolbarButton } from '../../../models/grid-config';
 @Component({
   selector: 'nv-toolbar',
   templateUrl: './toolbar.component.html',
-  styleUrls: ['./toolbar.component.css'],
+  styleUrls: ['./toolbar.component.css']
 })
 export class ToolbarComponent {
   @Input() title: string;
   @Input() backgroundColor: string;
   @Input() toolbarButtons: NvToolbarButton[] = [];
-
   public readonly Constants = NvGridConstants;
 
   constructor() {

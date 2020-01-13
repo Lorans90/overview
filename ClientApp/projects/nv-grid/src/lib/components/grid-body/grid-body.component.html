@@ -6,11 +6,10 @@
     [paragraphSize]="gridConfig.paging.pageSize"
   >
   </nv-loading>
-
   <ng-container *ngIf="(rows && rows.length > 0) || isLoading; else noContentToShow">
     <ng-container
       #rows
-      *ngFor="let row of rows; let rowIndex=index;"
+      *ngFor="let row of rows; let rowIndex=index; let odd=odd"
     >
       <div
         *ngIf="formsObject[row.id] ? (formsObject[row.id].changed | async) : true"
@@ -20,8 +19,9 @@
         [style.lineHeight.px]="gridConfig.rowHeight"
         [style.top.px]="rowIndex === 0 ? topPosition : 'unset'"
         [ngClass]="{
-          'selected': (selectedRowsSubject | async) && !!row['_checked'],
-          'highlighted': (focusedCellSubject | async).rowIndex === rowIndex,
+          'odd': odd,
+          'selected': !!row['_checked'],
+          'highlighted': focusedCellRowIndex === rowIndex,
           'edited': gridConfig.editForm.markBackgroundAsEdited ? !!row['_edited'] : false,
           'nv-first-row-sticky': rowIndex === 0 && gridConfig.pinFirstRow,
           'nv-first-row-border': rowIndex === 0 && gridConfig.pinFirstRow
@@ -38,7 +38,8 @@
             'nv-first-row-border': rowIndex === 0 && gridConfig.pinFirstRow
           }"
           [rowIndex]="rowIndex"
-          [row]="row"
+          [rowChecked]="!!row['_checked']"
+          [rowExpanded]="!!row['_expanded']"
           [rowSelectType]="gridConfig.rowSelectionType"
           [showMenuButton]="gridConfig.rowButtonsPosition === NvGridButtonsPosition.CollapsedLeft"
           [showExpandButton]="gridConfig.expandableComponentConfig"
@@ -49,27 +50,23 @@
           (menuButtonClicked)="handleContextMenu(row, rowIndex, $event.mouseEvent)"
         >
         </nv-left-action>
-        <div>
-        </div>
         <!-- Columns -->
-
         <nv-grid-cell
           *ngFor="let column of columns; let colIndex=index"
           [ngClass]="{
             'col-pinned-left': colIndex < gridConfig.pin.pinTill,
             'last-pinned-left': gridConfig.pin.pinTill  === colIndex + 1,
             disabled: formsObject[row.id] && formsObject[row.id].form.get(column.key).disabled,
-            focused: (focusedCellSubject | async).rowIndex === rowIndex
-              && (focusedCellSubject | async).columnKey === column.key
-              && (editingCellSubject | async).rowIndex !== rowIndex
-              && (editingCellSubject | async).columnKey !== column.key,
+            focused: focusedCellRowIndex === rowIndex
+              && focusedCellColumnKey === column.key
+              && editingCellRowIndex !== rowIndex
+              && editingCellColumnKey !== column.key,
               invalid: formsObject[row.id] && formsObject[row.id].form.get(column.key).touched
               && formsObject[row.id].form.get(column.key).errors
           }"
           [error]="formsObject[row.id]
             && formsObject[row.id].form.get(column.key).errors
             && ((formsObject[row.id].form.get(column.key).errors | objectFirstElement) | translate)"
-
           [rootConfigChanged]="rootConfigChanged"
           [style.width.px]="column.width"
           [style.minWidth.px]="column.width"
@@ -81,7 +78,7 @@
           [column]="column"
           [rowIndex]="rowIndex"
           [row]="row"
-          [isEditing]="(editingCellSubject | async).rowIndex === rowIndex && (editingCellSubject | async).columnKey === column.key"
+          [isEditing]="editingCellRowIndex === rowIndex && editingCellColumnKey === column.key"
           [columnTemplate]="columnTemplatesDictionary[column.key]"
           (click)="handleClick($event, row, rowIndex, column)"
           [columnEditTemplate]="columnEditTemplatesDictionary[column.key]"

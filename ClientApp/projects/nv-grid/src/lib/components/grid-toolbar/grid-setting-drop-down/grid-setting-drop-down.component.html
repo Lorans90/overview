@@ -1,6 +1,5 @@
 <button
   class="toolbar-button"
-  [ngClass]="{'not-saved-changes':  !disable()}"
   nz-button
   nz-dropdown
   [nzDropdownMenu]="nvDropMenu"
@@ -30,7 +29,7 @@
       [nzTooltipTitle]="'smallSize' | translate"
       [ngClass]="{
           'option-selected': gridConfig.rowHeight === NvRowHeight.smallSize
-        }"
+      }"
     >
       <li
         nz-menu-item
@@ -137,7 +136,6 @@
     <button
       class="drop-down-button"
       nz-button
-      nzType="default"
       title="{{'reset' | translate}}"
       [disabled]="disableResetButton()"
       (click)="reset()"

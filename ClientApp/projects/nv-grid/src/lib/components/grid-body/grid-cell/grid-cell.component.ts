@@ -14,7 +14,6 @@ import {
 } from '../../../models/grid-config';
 import { FormGroup, ValidationErrors } from '@angular/forms';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { NvGridI18nInterface } from '../../../services/nv-grid-i18n.service';
 
 @Component({
@@ -48,19 +47,17 @@ export class GridCellComponent implements OnInit {
 
   ngOnInit(): void {
     this.dataAttr = this.column.key;
-    this.tabKeyDown.pipe(
-      debounceTime(50),
-      distinctUntilChanged()
-    ).subscribe((event) => {
-      this.markRowAsModified();
-      if (!this.containsErrors() || this.allowJumpToNextCellIfInvalid) {
-        if (event.shiftKey && event.key === 'Tab') {
-          this.nextCell.emit({ form: this.form, event: true });
-        } else {
-          this.nextCell.emit({ form: this.form, event: false });
+    this.tabKeyDown
+      .subscribe((event) => {
+        this.markRowAsModified();
+        if (!this.containsErrors() || this.allowJumpToNextCellIfInvalid) {
+          if (event.shiftKey && event.key === 'Tab') {
+            this.nextCell.emit({ form: this.form, event: true });
+          } else {
+            this.nextCell.emit({ form: this.form, event: false });
+          }
         }
-      }
-    });
+      });
 
     this.externalEmitter.subscribe((event: KeyboardEvent | FocusEvent | boolean) => {
 

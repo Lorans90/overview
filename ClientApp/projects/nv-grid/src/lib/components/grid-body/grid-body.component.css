@@ -35,11 +35,11 @@
 }
 
 .grid-body-container .grid-row {
-  background-color: whitesmoke;
+  background-color: white;
 }
 
-.grid-body-container .grid-row:nth-child(even) {
-  background-color: white;
+.grid-body-container .grid-row.odd {
+  background-color: whitesmoke;
 }
 
 .grid-body-container .grid-row.selected {

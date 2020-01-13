@@ -79,7 +79,7 @@ export class DataSourceService {
         return 0;
       });
     }
-    return [];
+    return rows;
   }
 
   private getColumnsWithFilter(columns: NvColumnConfig[]): NvColumnConfig[] {

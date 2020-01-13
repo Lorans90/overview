@@ -23,7 +23,8 @@ import {
   NvGridConfig,
   NvGridConstants,
   NvGridRowSelectionType,
-  NvRowSelection
+  NvRowSelection,
+  NvScrollMode
 } from '../../models/grid-config';
 import { ConfigurationService } from '../../services/configuration.service';
 import { GridUtilsService } from '../../services/grid-utils.service';
@@ -31,7 +32,6 @@ import { ColumnTemplateDirective } from '../../directives/column-template.direct
 import { ColumnEditTemplateDirective } from '../../directives/column-edit-template.directive';
 import { FormGroup } from '@angular/forms';
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
-import { throttleTime } from 'rxjs/operators';
 import { ClickService } from '../../services/click.service';
 import { OriginalRowsService } from '../../services/original-rows.service';
 import { NvGridI18nInterface } from '../../services/nv-grid-i18n.service';
@@ -50,9 +50,11 @@ export class GridBodyComponent implements OnInit, OnChanges, OnDestroy {
   @Input() columnTemplates: QueryList<ColumnTemplateDirective>;
   @Input() columnEditTemplates: QueryList<ColumnEditTemplateDirective>;
   @Input() modifiedRowsSubject: BehaviorSubject<any[]>;
-  @Input() editingCellSubject: BehaviorSubject<NvCellCordinates>;
+  @Input() editingCellRowIndex: number;
+  @Input() editingCellColumnKey: string;
+  @Input() focusedCellRowIndex: number;
+  @Input() focusedCellColumnKey: string;
   @Input() forms: NvForm[];
-  @Input() focusedCellSubject: BehaviorSubject<NvCellCordinates>;
   @Input() private stillClickedInsideBodySubject: BehaviorSubject<boolean>;
   @Input() rootConfigChanged: NvGridI18nInterface;
   @Input() columns: NvColumnConfig[];
@@ -70,6 +72,8 @@ export class GridBodyComponent implements OnInit, OnChanges, OnDestroy {
   @Output() handleEnterKeyDown = new EventEmitter();
   @Output() rowClicked = new EventEmitter<NvRowSelection>();
   @Output() jumpToFirstInvalidCell = new EventEmitter<void>();
+  @Output() focusCell = new EventEmitter<NvCellCordinates>();
+  @Output() editCell = new EventEmitter<NvCellCordinates>();
   @ViewChildren('rows', { read: ViewContainerRef }) rowsTemplates: QueryList<ViewContainerRef>;
 
   public NvGridButtonsPosition = NvGridButtonsPosition;
@@ -84,7 +88,6 @@ export class GridBodyComponent implements OnInit, OnChanges, OnDestroy {
   public formsObject: { [id: string]: { form: FormGroup, changed: BehaviorSubject<boolean> } } = {};
   public leftPositions: { [key: string]: number } = {};
 
-  private pendingEditableCell: NvCellCordinates;
   constructor(
     public configurationService: ConfigurationService,
     public gridUtilsService: GridUtilsService,
@@ -100,9 +103,7 @@ export class GridBodyComponent implements OnInit, OnChanges, OnDestroy {
       if (
         !this.gridConfig.editForm.disableEditColumns
         && this.gridConfig.editForm.allowCreateNewRow
-        && this.editingCellSubject
-        && this.editingCellSubject.value
-        && this.editingCellSubject.value.rowIndex === -1
+        && this.editingCellRowIndex
       ) {
         if (this.allFormsAreValid()) {
           this.createNewRow.emit();
@@ -117,11 +118,8 @@ export class GridBodyComponent implements OnInit, OnChanges, OnDestroy {
     if (this.stillClickedInsideBodySubject.value) {
       event.preventDefault();
       if (!this.gridConfig.editForm.disableEditColumns) {
-        if (this.focusedCellSubject
-          && this.focusedCellSubject.value
-          && this.focusedCellSubject.value.rowIndex > -1
-        ) {
-          const columnKey = this.focusedCellSubject.value.columnKey;
+        if (this.focusedCellRowIndex > -1) {
+          const columnKey = this.focusedCellColumnKey;
           const columnToEdit = this.gridConfig.columns.find(column => column.key === columnKey);
 
           if (
@@ -129,8 +127,8 @@ export class GridBodyComponent implements OnInit, OnChanges, OnDestroy {
             columnToEdit.editControl.editable
           ) {
             this.updateEditingCellAndCreateForm(
-              this.focusedCellSubject.value.rowIndex,
-              this.focusedCellSubject.value.columnKey
+              this.focusedCellRowIndex,
+              this.focusedCellColumnKey
             );
           }
         }
@@ -141,7 +139,7 @@ export class GridBodyComponent implements OnInit, OnChanges, OnDestroy {
   @HostListener('document:keydown.Enter', ['$event']) enterKeyDownHandler(event: KeyboardEvent) {
     if (
       this.stillClickedInsideBodySubject.value
-      && this.editingCellSubject.value.rowIndex === -1
+      && this.editingCellRowIndex === -1
     ) {
       event.preventDefault();
       this.handleEnterKeyDown.emit();
@@ -155,11 +153,9 @@ export class GridBodyComponent implements OnInit, OnChanges, OnDestroy {
 
     if (
       !this.clickedInsideOfBody
-      && this.focusedCellSubject
-      && this.focusedCellSubject.value
-      && this.focusedCellSubject.value.rowIndex !== -1
+      && this.focusedCellRowIndex !== -1
     ) {
-      this.focusedCellSubject.next({ rowIndex: -1, columnKey: null });
+      this.focusCell.emit({ rowIndex: -1, columnKey: null });
     }
 
     this.clickedInsideOfBody = false;
@@ -171,11 +167,7 @@ export class GridBodyComponent implements OnInit, OnChanges, OnDestroy {
   @HostListener('document:keydown.ArrowLeft', ['$event'])
   handleEvent(event: KeyboardEvent) {
     if (this.stillClickedInsideBodySubject.value) {
-      if (
-        this.editingCellSubject
-        && this.editingCellSubject.value
-        && this.editingCellSubject.value.rowIndex === -1
-      ) {
+      if (this.editingCellRowIndex === -1) {
         event.preventDefault();
         this.arrowKeys.next(event);
       }
@@ -183,11 +175,9 @@ export class GridBodyComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit() {
+
     this.topPosition = this.configurationService.getTopPosition(this.gridConfig.hideAllFilters);
     this.arrowKeysSubscribtion = this.arrowKeys
-      .pipe(
-        throttleTime(50),
-      )
       .subscribe((event: KeyboardEvent) => this.handleArrowKeyboardEvent(event));
 
     this.clickService.clickSubscribtion(this.click)
@@ -227,11 +217,6 @@ export class GridBodyComponent implements OnInit, OnChanges, OnDestroy {
           [nvForm.id]: nvForm
         };
       }, initialValue);
-
-      if (this.pendingEditableCell) {
-        this.updateEditingCellAndCreateForm(this.pendingEditableCell.rowIndex, this.pendingEditableCell.columnKey);
-        this.pendingEditableCell = null;
-      }
     }
     if (changes.columnTemplates && this.columnTemplates) {
       this.columnTemplates.forEach(template => {
@@ -250,10 +235,19 @@ export class GridBodyComponent implements OnInit, OnChanges, OnDestroy {
     this.clickedInsideOfBody = true;
   }
 
-  public markModifiedRows(modifiedRow: any) {
-    modifiedRow['_edited'] = true;
+  public markModifiedRows(newModifiedRow: any) {
+    if (!newModifiedRow['_edited']) {
+      newModifiedRow['_edited'] = true;
+    }
+    const modifiedRows = this.modifiedRowsSubject.value;
+    const foundModifiedRowByRowIndex = modifiedRows.findIndex(modifiedRow => modifiedRow.id === newModifiedRow.id);
 
-    const modifiedRows = this.rows.filter((row: any) => row['_edited'] === true && row['id'] !== undefined);
+    if (foundModifiedRowByRowIndex > -1) {
+      modifiedRows[foundModifiedRowByRowIndex] = newModifiedRow;
+    } else {
+      modifiedRows.push(newModifiedRow);
+    }
+
     this.modifiedRowsSubject.next(modifiedRows);
   }
 
@@ -284,9 +278,7 @@ export class GridBodyComponent implements OnInit, OnChanges, OnDestroy {
     if (!this.gridConfig.editForm.disableEditColumns && column.editControl.editable) {
       this.updateEditingCellAndCreateForm(rowIndex, column.key);
     }
-    if (!this.gridConfig.disableHighlightingCell) {
-      this.updateFocusedCell(rowIndex, column.key);
-    }
+    this.updateFocusedCell(rowIndex, column.key);
 
     if (column.customCellClickFn !== undefined) {
       this.handleCustom.emit({
@@ -345,10 +337,13 @@ export class GridBodyComponent implements OnInit, OnChanges, OnDestroy {
       backwards ? currentRowIndex -= 1 : currentRowIndex += 1;
       currentRow = this.rows[currentRowIndex];
       if (currentRow) {
+        const currentRowForm = this.formsObject[currentRow.id];
         nextEditableColumn = visibleAndNotHiddenColumns
           .find((column: NvColumnConfig) =>
-            column.editControl.editable !== false &&
-            form.get(column.key).enabled);
+            column.editControl.editable !== false && (
+              currentRowForm && currentRowForm.form.get(column.key).enabled
+              || !column.editControl.disabled
+            ));
       } else if (
         !backwards &&
         this.gridConfig.editForm.allowCreateNewRow &&
@@ -366,13 +361,13 @@ export class GridBodyComponent implements OnInit, OnChanges, OnDestroy {
       const newRowIndex = currentRowIndex;
 
       this.updateFocusedCell(newRowIndex, newColumnKey);
-      this.updateSelectedRow(newRowIndex);
       this.updateEditingCellAndCreateForm(newRowIndex, newColumnKey);
+      this.updateSelectedRow(newRowIndex);
     }
   }
 
   public updateFocusedCell(rowIndex: number, columnKey: string) {
-    this.focusedCellSubject.next({ rowIndex: rowIndex, columnKey: columnKey });
+    this.focusCell.emit({ rowIndex: rowIndex, columnKey: columnKey });
   }
 
   public isRowEdited(row: any): any {
@@ -384,14 +379,12 @@ export class GridBodyComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public restore(rowIndex: number, row: any) {
-
     if (this.isRowNew(row)) {
       this.modifiedRowOnDiscard.emit({ rowId: row.id });
     } else {
       const form = this.formsObject[row.id].form;
       const foundOriginalRow = this.originalRowsService.originalRows.value
         .find((originalRow: any) => originalRow.id === row.id);
-
       if (foundOriginalRow) {
         this.gridConfig.columns.forEach(column => {
           form.get(column.key).setValue(foundOriginalRow[column.key]);
@@ -400,7 +393,7 @@ export class GridBodyComponent implements OnInit, OnChanges, OnDestroy {
       row['_edited'] = false;
       form.markAsPristine();
     }
-    if (this.gridConfig.editForm.enableLocalStorageService) {
+    if (this.gridConfig.editForm && this.gridConfig.editForm.enableLocalStorageService) {
       this.modifiedRowsSubject
         .next(
           this.modifiedRowsSubject
@@ -415,39 +408,36 @@ export class GridBodyComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private handleArrowKeyboardEvent(event: KeyboardEvent) {
-    if (!this.gridConfig.disableHighlightingCell) {
-      if (
-        this.focusedCellSubject.value
-        && this.focusedCellSubject.value.rowIndex > -1
-      ) {
-        const currenctRowIndex = this.focusedCellSubject.value.rowIndex;
-        const currentKey = this.focusedCellSubject.value.columnKey;
-        if (event.key === 'ArrowLeft') {
-          const neighborColumn = this.getNeighborColumn(currentKey, false);
+    if (
+      this.focusedCellRowIndex > -1
+    ) {
+      const currenctRowIndex = this.focusedCellRowIndex;
+      const currentKey = this.focusedCellColumnKey;
+      if (event.key === 'ArrowLeft') {
+        const neighborColumn = this.getNeighborColumn(currentKey, false);
 
-          if (neighborColumn) {
-            this.updateFocusedCell(currenctRowIndex, neighborColumn.key);
-          }
+        if (neighborColumn) {
+          this.updateFocusedCell(currenctRowIndex, neighborColumn.key);
         }
-        if (event.key === 'ArrowRight') {
-          const neighborColumn = this.getNeighborColumn(currentKey, true);
-          if (neighborColumn) {
-            this.updateFocusedCell(currenctRowIndex, neighborColumn.key);
-          }
+      }
+      if (event.key === 'ArrowRight') {
+        const neighborColumn = this.getNeighborColumn(currentKey, true);
+        if (neighborColumn) {
+          this.updateFocusedCell(currenctRowIndex, neighborColumn.key);
         }
-        if (event.key === 'ArrowUp') {
-          if (currenctRowIndex - 1 > -1) {
-            this.updateFocusedCell(currenctRowIndex - 1, currentKey);
-            this.scrollToRowElement(currenctRowIndex - 1);
+      }
+      if (event.key === 'ArrowUp') {
+        if (currenctRowIndex - 1 > -1) {
+          this.updateFocusedCell(currenctRowIndex - 1, currentKey);
+          this.scrollToRowElement(currenctRowIndex - 1, true);
 
-          }
         }
-        if (event.key === 'ArrowDown') {
-          if (currenctRowIndex + 1 < this.rows.length) {
-            this.updateFocusedCell(currenctRowIndex + 1, currentKey);
-            this.scrollToRowElement(currenctRowIndex + 1);
+      }
+      if (event.key === 'ArrowDown') {
+        if (currenctRowIndex + 1 < this.rows.length) {
+          this.updateFocusedCell(currenctRowIndex + 1, currentKey);
+          this.scrollToRowElement(currenctRowIndex + 1, false);
 
-          }
         }
       }
     }
@@ -460,7 +450,7 @@ export class GridBodyComponent implements OnInit, OnChanges, OnDestroy {
             rowIndex: lastSelectIndex + 1,
             mouseEvent: null
           });
-          this.scrollToRowElement(lastSelectIndex + 1);
+          this.scrollToRowElement(lastSelectIndex + 1, false);
         }
       }
       if (event.key === 'ArrowUp') {
@@ -469,13 +459,13 @@ export class GridBodyComponent implements OnInit, OnChanges, OnDestroy {
             rowIndex: lastSelectIndex - 1,
             mouseEvent: null
           });
-          this.scrollToRowElement(lastSelectIndex - 1);
+          this.scrollToRowElement(lastSelectIndex - 1, true);
         }
       }
     }
   }
 
-  private scrollToRowElement(rowIndex: number) {
+  private scrollToRowElement(rowIndex: number, directionUp: boolean) {
 
     const foundRow = this.rowsTemplates
       .find(row => row.element.nativeElement.nextElementSibling.getAttribute('id') === rowIndex.toString());
@@ -495,10 +485,26 @@ export class GridBodyComponent implements OnInit, OnChanges, OnDestroy {
       const currentScroll = nvGridElement.scrollTop;
       if (rowElementTop < 0) {
         nvGridElement.scrollTop = (currentScroll + rowElementTop);
+        if (this.gridConfig.pinFirstRow) {
+          nvGridElement.scrollTop -= this.gridConfig.rowHeight;
+        }
       } else if (rowBottom > tableHeight) {
         const scrollAmount = rowBottom - tableHeight;
-
         nvGridElement.scrollTop = (currentScroll + scrollAmount);
+      } else if (this.gridConfig.scrollMode === NvScrollMode.central) {
+        if (directionUp) {
+          nvGridElement.scrollTop -= this.gridConfig.rowHeight;
+        } else {
+          nvGridElement.scrollTop += this.gridConfig.rowHeight;
+        }
+        if (rowElementTop === this.gridConfig.rowHeight) {
+          nvGridElement.scrollTop -= this.gridConfig.rowHeight;
+        }
+      }
+      if (this.gridConfig.pinFirstRow && this.gridConfig.scrollMode !== NvScrollMode.central) {
+        if (rowElementTop > -1 && rowElementTop < this.gridConfig.rowHeight) {
+          nvGridElement.scrollTop -= this.gridConfig.rowHeight;
+        }
       }
     }
   }
@@ -526,20 +532,22 @@ export class GridBodyComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private updateEditingCell(rowIndex: any, key: string) {
-    this.editingCellSubject.next({ rowIndex: rowIndex, columnKey: key });
+    this.editCell.emit({ rowIndex: rowIndex, columnKey: key });
   }
 
   private updateEditingCellAndCreateForm(rowIndex: number, key: string) {
     const rowId = this.rows[rowIndex].id;
-    const form = this.formsObject[rowId] && this.formsObject[rowId].form;
+    let form = this.formsObject[rowId] && this.formsObject[rowId].form;
     if (!form) {
       this.createNewForm.emit({ rowId: rowId });
-      return this.pendingEditableCell = { rowIndex: rowIndex, columnKey: key };
-    }
-    if (
+      setTimeout(() => {
+        form = this.formsObject[rowId] && this.formsObject[rowId].form;
+        this.updateEditingCellAndCreateForm(rowIndex, key);
+      }, 0);
+    } else if (
       form.get(key).enabled &&
-      (this.editingCellSubject.value.rowIndex !== rowIndex ||
-        this.editingCellSubject.value.columnKey !== key)
+      (this.editingCellRowIndex !== rowIndex ||
+        this.editingCellColumnKey !== key)
     ) {
       this.updateEditingCell(rowIndex, key);
     }

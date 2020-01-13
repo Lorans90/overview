@@ -1,10 +1,19 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges
+} from '@angular/core';
 import { NvGridConstants, NvPagination } from '../../models/grid-config';
 
 @Component({
   selector: 'nv-grid-pagination',
   templateUrl: './grid-pagination.component.html',
-  styleUrls: ['./grid-pagination.component.css']
+  styleUrls: ['./grid-pagination.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GridPaginationComponent implements OnChanges {
   @Input() totalItems: number;

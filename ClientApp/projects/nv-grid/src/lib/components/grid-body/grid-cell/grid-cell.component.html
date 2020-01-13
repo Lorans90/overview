@@ -79,7 +79,6 @@
     <div
       class="error-marker"
       *ngIf="form && form.get(column.key).touched && error"
-
       nz-popover
       [nzPopoverTitle]="error"
       [nzContent]="column.editControl.errorPopoverContentTemplate

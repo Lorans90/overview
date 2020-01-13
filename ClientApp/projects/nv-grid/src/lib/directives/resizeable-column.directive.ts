@@ -1,10 +1,12 @@
 import {
   Directive,
   ElementRef,
+  EventEmitter,
   HostBinding,
   HostListener,
   Input,
   OnDestroy,
+  Output,
   Renderer2
 } from '@angular/core';
 import { fromEvent, Subscription } from 'rxjs';
@@ -17,7 +19,7 @@ import { NvColumnConfig } from '../models/grid-config';
 export class ResizeableColumnDirective implements OnDestroy {
 
   @Input() public column: NvColumnConfig;
-
+  @Output() public resized = new EventEmitter<void>();
   element: HTMLElement;
   subscription: Subscription;
   newWidth: number;
@@ -57,6 +59,7 @@ export class ResizeableColumnDirective implements OnDestroy {
       }, 5);
       this._destroySubscription();
       this.column.width = this.widthUntilMouseUp;
+      this.resized.emit();
     }
   }
 
@@ -74,15 +77,15 @@ export class ResizeableColumnDirective implements OnDestroy {
       const mouseup = mouseEvent.touches ? fromEvent(document, 'touchend') : fromEvent(document, 'mouseup');
       this.subscription = mouseup
         .subscribe(() => {
-            this.onMouseup();
-          }
+          this.onMouseup();
+        }
         );
 
       const mouseMoveSub = (mouseEvent.touches ? fromEvent(document, 'touchmove') : fromEvent(document, 'mousemove'))
         .pipe(takeUntil(mouseup))
         .subscribe((e: any) => {
-            this.move(e, initialWidth, mouseDownScreenX);
-          }
+          this.move(e, initialWidth, mouseDownScreenX);
+        }
         );
 
       this.subscription.add(mouseMoveSub);

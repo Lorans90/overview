@@ -1,11 +1,12 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { NvColumnConfig, NvGridConfig, NvGridConstants } from '../../models/grid-config';
 import { ConfigurationService } from '../../services/configuration.service';
 
 @Component({
   selector: 'nv-grid-filter',
   templateUrl: './grid-filter.component.html',
-  styleUrls: ['./grid-filter.component.css']
+  styleUrls: ['./grid-filter.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class GridFilterComponent {

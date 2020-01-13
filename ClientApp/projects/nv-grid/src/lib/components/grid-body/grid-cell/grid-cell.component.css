@@ -39,8 +39,6 @@
   left: 2px;
 }
 
-
-
 .linkify :hover {
   text-decoration: underline;
 }
@@ -48,17 +46,6 @@
 .linkify {
   cursor: pointer;
   color: #40a9ff
-}
-
-.required:after {
-  color: #af2e08;
-  content: "*";
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 7px;
-  height: 13px;
-  line-height: 13px;
 }
 
 .nv-cell-value {

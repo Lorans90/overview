@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import {
   NvColumnConfig,
   NvFilterControl,
@@ -15,7 +15,8 @@ interface FilterValue {
 @Component({
   selector: 'nv-filter-cell',
   templateUrl: './filter-cell.component.html',
-  styleUrls: ['./filter-cell.component.css']
+  styleUrls: ['./filter-cell.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class FilterCellComponent implements OnInit, OnDestroy {

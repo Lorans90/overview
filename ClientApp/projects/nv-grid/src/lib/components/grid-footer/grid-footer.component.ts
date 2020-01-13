@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import {
   NvColumnConfig,
   NvGridConfig,
@@ -12,7 +12,8 @@ import { NvGridI18nInterface } from '../../services/nv-grid-i18n.service';
 @Component({
   selector: 'nv-grid-footer',
   templateUrl: './grid-footer.component.html',
-  styleUrls: ['./grid-footer.component.css']
+  styleUrls: ['./grid-footer.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GridFooterComponent implements OnChanges {
   @Input() gridConfig: NvGridConfig;

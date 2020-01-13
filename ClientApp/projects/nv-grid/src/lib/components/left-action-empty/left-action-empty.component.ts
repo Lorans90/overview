@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input,
@@ -15,7 +16,8 @@ import {
 @Component({
   selector: 'nv-left-action-empty',
   templateUrl: './left-action-empty.component.html',
-  styleUrls: ['./left-action-empty.component.css']
+  styleUrls: ['./left-action-empty.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LeftActionEmptyComponent implements OnChanges {
   @Input() isFilterRow = false;

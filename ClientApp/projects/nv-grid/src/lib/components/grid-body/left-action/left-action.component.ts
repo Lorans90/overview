@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import {
   NvGridConstants,
   NvGridRowSelectionType,
@@ -8,11 +8,13 @@ import {
 @Component({
   selector: 'nv-left-action',
   templateUrl: './left-action.component.html',
-  styleUrls: ['./left-action.component.css']
+  styleUrls: ['./left-action.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LeftActionComponent {
   @Input() public rowIndex: number;
-  @Input() public row: any;
+  @Input() public rowChecked: boolean;
+  @Input() public rowExpanded: boolean;
   @Input() public rowSelectType: NvGridRowSelectionType;
   @Input() public showMenuButton: boolean;
   @Input() public disableMenuButton: boolean;

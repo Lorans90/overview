@@ -98,7 +98,8 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
   public footerChangesDetected: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
   public selectedRowsSubject: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
-
+  editingCell: NvCellCordinates;
+  focusedCell: NvCellCordinates;
   constructor(
     public gridDataService: GridDataService,
     private originalRowsService: OriginalRowsService,
@@ -127,19 +128,29 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
     return clonedRows;
   }
 
+  public getIndexOfRowId(id: number | string) {
+    return this.rows.findIndex(row => row.id === id);
+
+  }
   public createNewForm(id: number | string) {
     if (id && !this.checkIfFormExistsByRowId(id)) {
       const childForm = this.formBuilder.group({});
       const columns = this.gridConfig.columns;
-      const foundRow = this.findRowById(id);
-
+      const foundRow = this.findRowInDataSourceById(id);
+      const indexOfFoundRow = this.getIndexOfRowId(foundRow.id);
+      const firstVisibleColumn = this.configurationService.visibleColumns.value[0];
       columns.forEach((column: NvColumnConfig) => {
         const newControl = new FormControl(
           foundRow[column.key],
           column.editControl.validation ? column.editControl.validation.validators : null,
           column.editControl.validation ? column.editControl.validation.asyncValidators : null
         );
-        if (column.editControl.disabled) {
+        if (column.editControl.disabled
+          || (
+            this.gridConfig.editForm.disableFirstCell
+            && firstVisibleColumn.key === column.key
+            && indexOfFoundRow === 0)
+        ) {
           newControl.disable();
         }
         childForm.addControl(column.key, newControl);
@@ -150,7 +161,13 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
             subscribtion: childForm.get(column.key).valueChanges.pipe(
               takeUntil(this.componentDestroyed$)
             ).subscribe(value => {
-              if (value && column.dataType === NvColumnDataType.Number) {
+              if (
+                value
+                && (
+                  column.dataType === NvColumnDataType.Number
+                  || column.dataType === NvColumnDataType.Decimal
+                )
+              ) {
                 value = Number(value);
               }
               if (column.key !== this.Constants.UNIQUE_ROW_KEY) {
@@ -202,7 +219,6 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
           changed: new BehaviorSubject<boolean>(true)
         }
       ];
-
       this.formsDataSubject.next(forms);
     }
   }
@@ -214,11 +230,8 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
       this.changePage(1);
     }
 
-    this.formsDataSubject.next([]);
     this.applyFiltering();
-    this.applySorting();
     this.refreshGrid();
-    this.originalRowsService.originalRows.next(JSON.parse(JSON.stringify(this.dataSource)));
     this.createNewRowOnInit();
   }
 
@@ -227,7 +240,7 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
       this.handleNormalizationAndConfiguration();
     }
     if (changes.dataSource) {
-      this.displayRows();
+      this.reset();
     } else if (changes.dataSource$) {
       this.isLoading.next(true);
       this.dataSource$.pipe(
@@ -235,15 +248,29 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
       ).subscribe((dataSource: any[]) => {
         this.isLoading.next(false);
         this.dataSource = dataSource;
-        this.displayRows();
+        this.reset();
       });
     }
   }
 
+  private reset() {
+    this.formsDataSubject.next([]);
+    this.originalRowsService.originalRows.next(JSON.parse(JSON.stringify(this.dataSource)));
+    this.applyLocalStorageChanges();
+    this.applySortingToDataSource();
+    this.displayRows();
+  }
 
   private createNewRowOnInit() {
-    if (
-      this.gridConfig &&
+    if (this.gridConfig &&
+      this.gridConfig.editForm &&
+      !this.gridConfig.editForm.disableEditColumns &&
+      this.gridConfig.editForm.createFirstFormIfRowExist &&
+      this.rows.length > 0
+    ) {
+      this.createNewForm(this.rows[0].id);
+    } else if (this.gridConfig &&
+      this.gridConfig.editForm &&
       this.gridConfig.editForm.allowCreateNewRow &&
       !this.gridConfig.editForm.disableEditColumns &&
       this.rows.length === 0
@@ -267,6 +294,8 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnInit() {
+    this.focusedCellSubject.subscribe(cords => this.focusedCell = cords);
+    this.editingCellSubject.subscribe(cords => this.editingCell = cords);
     if (this.gridConfig && this.gridConfig.url) {
       this.subscribeConnector();
     }
@@ -325,6 +354,17 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
       this.rows = this.dataSource;
     }
     this.totalItems = this.rows.length;
+    this.selectedRowsSubject.next(this.getSelectedRows());
+  }
+
+  private applySortingToDataSource() {
+    if (this.gridConfig.sortBy) {
+      this.dataSource = this.dataSourceService.applySortingToDataSource(
+        this.gridConfig.sortBy,
+        this.gridConfig.isSortAscending,
+        this.dataSource
+      );
+    }
   }
 
   public applySorting() {
@@ -355,8 +395,12 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
       this.onRowSelectionChanged();
     }
 
-    this.focusedCellSubject.next({ rowIndex: -1, columnKey: null });
-    this.editingCellSubject.next({ rowIndex: -1, columnKey: null });
+    this.editCell({ rowIndex: -1, columnKey: null });
+    this.focusCell({ rowIndex: -1, columnKey: null });
+
+
+
+
   }
 
 
@@ -365,36 +409,41 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public checkLocalStorageForChanges() {
-    if (this.gridConfig.editForm.enableLocalStorageService) {
-      const rows = this.localStorageService.getLocal(this.gridConfig.gridName + '.unsaved.changes');
-      if (rows) {
-        this.modifiedRowsSubject.next(rows);
+    if (this.gridConfig.editForm && this.gridConfig.editForm.enableLocalStorageService) {
+      const modfidiedRows: any[] = this.localStorageService
+        .getLocal(this.gridConfig.gridName + '.unsaved.changes');
+      if (modfidiedRows) {
+        this.modifiedRowsSubject.next(modfidiedRows);
       }
     }
   }
 
-  public setModifiedRows() {
-    this.modifiedRowsSubject.value.forEach((row: any) => {
-      const toRefreshRow = this.findRowById(row.id);
-      if (toRefreshRow) {
-        Object.keys(toRefreshRow).forEach(key => {
-          const column = this.gridConfig.columns.find(configColumn => configColumn.key === key);
-          if (column && !column.customFormatFn) {
-            if (toRefreshRow[key]) {
-              toRefreshRow[key] = row[key];
-            }
-          }
-        });
-        this.createNewForm(row.id);
-        toRefreshRow['_edited'] = true;
-      } else if (toRefreshRow['_new']) {
-        this.createNewRow(row);
-      }
-    });
+  public applyLocalStorageChanges() {
+    if (this.gridConfig.editForm && this.gridConfig.editForm.enableLocalStorageService) {
+      this.modifiedRowsSubject.value.forEach((modfidiedRow: any) => {
+        const foundRowIndex = this.dataSource.findIndex(row => row.id === modfidiedRow.id);
+        if (foundRowIndex > -1) {
+          modfidiedRow['_edited'] = true;
+          this.dataSource[foundRowIndex] = modfidiedRow;
+          this.createNewForm(modfidiedRow.id);
+
+        } else {
+          this.createNewRow(modfidiedRow);
+        }
+      });
+    }
   }
 
   public findRowById(id: number | string): any {
     return this.rows.find(row => row.id === id);
+  }
+
+  public focusCell(coordinates: NvCellCordinates) {
+    this.focusedCellSubject.next({ rowIndex: coordinates.rowIndex, columnKey: coordinates.columnKey });
+  }
+
+  public editCell(coordinates: NvCellCordinates) {
+    this.editingCellSubject.next({ rowIndex: coordinates.rowIndex, columnKey: coordinates.columnKey });
   }
 
   public findRowInDataSourceById(id: number | string): any {
@@ -619,9 +668,8 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
       this.gridConfig.rowSelectionType === NvGridRowSelectionType.RadioButton
       && this.selectedRowsSubject.value.length === 1
     ) {
-      rowIndex = this.selectedRowsSubject.value[0].rowIndex;
+      rowIndex = this.rows.findIndex(row => row.id === this.selectedRowsSubject.value[0].id);
     }
-
     if (rowIndex > -1) {
       const virtualRowIndex = (this.gridConfig.paging.pageNumber - 1)
         * this.gridConfig.paging.pageSize
@@ -655,7 +703,12 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
   public focusCellOfAnyRow(rowIndex: number, columnKey?: string) {
     this.jumpToPage(rowIndex);
     const rowId = this.rows[rowIndex].id;
-    const formData = this.getFormDataByRowId(rowId);
+    let formData = this.getFormDataByRowId(rowId);
+    if (!formData) {
+      this.createNewForm(rowId);
+      formData = this.getFormDataByRowId(rowId);
+
+    }
     const columns = this.configurationService.visibleColumns.value;
     const foundColumn = columns.find((column: NvColumnConfig) =>
       columnKey
@@ -667,14 +720,16 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
 
     const rowIndexReal = rowIndex - (this.gridConfig.paging.pageNumber - 1) * this.gridConfig.paging.pageSize;
     this.toggleRowSelect(rowIndexReal, null);
-    this.focusedCellSubject.next({ rowIndex: rowIndexReal, columnKey: foundColumn.key });
-    this.editingCellSubject.next({ rowIndex: rowIndexReal, columnKey: foundColumn.key });
+    if (foundColumn) {
+      this.focusedCellSubject.next({ rowIndex: rowIndexReal, columnKey: foundColumn.key });
+      this.editingCellSubject.next({ rowIndex: rowIndexReal, columnKey: foundColumn.key });
+    }
     this.stillClickedInsideBodySubject.next(true);
   }
 
-  public createNewRow(row?: any) {
-    const newRow: any = row ? row : {};
-    if (!row) {
+  public createNewRow(rowtoCreate?: any) {
+    const newRow: any = rowtoCreate ? rowtoCreate : {};
+    if (!rowtoCreate) {
       this.gridConfig.columns.forEach(column => {
         newRow[column.key] = null;
         if (column.editControl.defaultValue) {
@@ -684,12 +739,24 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
 
       newRow['id'] = 'nv-' + (Math.floor(Math.random() * 1000000) + 1000);
     }
-    this.rows = [...this.rows, newRow];
-    this.totalItems = this.rows.length;
+    if (this.rows) {
+      this.rows = [...this.rows, newRow];
+      this.totalItems = this.rows.length;
+    }
+    this.dataSource.push(newRow);
 
     newRow['_edited'] = true;
     newRow['_new'] = true;
     this.createNewForm(newRow['id']);
+
+    if (rowtoCreate) {
+      const formData = this.getFormDataByRowId(newRow.id);
+      if (formData) {
+        this.gridConfig.columns.forEach(column => {
+          formData.form.get(column.key).setValue(newRow[column.key]);
+        });
+      }
+    }
   }
 
   public deleteFormByRowId(rowId: number | string): void {
@@ -709,7 +776,7 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private subscribeToModifiedRows() {
-    if (this.gridConfig.editForm.enableLocalStorageService) {
+    if (this.gridConfig.editForm && this.gridConfig.editForm.enableLocalStorageService) {
       this.modifiedRowsSubject
         .pipe(
           takeUntil(this.componentDestroyed$)
@@ -730,7 +797,7 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
     this.mergeLocalStorageConfigInGridConfig();
     this.checkLocalStorageForChanges();
     this.subscribeToModifiedRows();
-    this.configurationService.visibleColumns.next(
+    this.configurationService.updateVisibleColumns(
       this.configurationService.getVisibleAndNotHiddenColumns(this.gridConfig.columns)
     );
   }
@@ -847,5 +914,10 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
       this.gridConfig.columns.filter(column => column.visible),
       this.nvGridI18nService.getConfiguration
     );
+  }
+
+  clearUnsavedChanges() {
+    this.modifiedRowsSubject.next([]);
+    this.localStorageService.removeLocal(this.gridConfig.gridName + '.unsaved.changes');
   }
 }

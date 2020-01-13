@@ -108,7 +108,7 @@ export class ConfigurationService {
       gridConfig.columns = columnsCorrectOrderArray;
       gridConfig.rowHeight = localStorageConfig.rowHeight;
       gridConfig.pin = localStorageConfig.pin;
-
+      this.updateVisibleColumns(gridConfig.columns);
     } else {
       this.removeAllSavedGridConfig();
       if (gridConfig) {
@@ -215,5 +215,11 @@ export class ConfigurationService {
           hidden: column.hidden
         })
       );
+  }
+
+  updateVisibleColumns(columns: NvColumnConfig[]) {
+    this.visibleColumns.next(
+      this.getVisibleAndNotHiddenColumns(columns)
+    );
   }
 }

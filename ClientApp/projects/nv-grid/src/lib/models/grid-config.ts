@@ -1,5 +1,5 @@
 import { TemplateRef, Type } from '@angular/core';
-import { NvAction } from 'nv-button/src/public_api';
+import { NvAction } from 'nv-button';
 import { AsyncValidatorFn, FormGroup, ValidatorFn } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 
@@ -33,11 +33,16 @@ export interface NvGridConfig {
   hideToolbar?: boolean;
   pinFirstRow?: boolean;
   editForm?: NvEditForm;
-  disableHighlightingCell?: boolean;
   hideRefreshButton?: boolean;
   showExcelButton?: boolean;
   styles?: NvStyles;
   contextMenuButtons?: NvButton[];
+  scrollMode?: NvScrollMode;
+}
+
+export enum NvScrollMode {
+  default,
+  central
 }
 
 export interface NvStyles {
@@ -94,6 +99,8 @@ export interface NvForm {
 }
 
 export interface NvEditForm {
+  createFirstFormIfRowExist?: boolean;
+  disableFirstCell?: boolean;
   disableEditColumns?: boolean;
   enableLocalStorageService?: boolean;
   allowCreateNewRow?: boolean;
@@ -159,7 +166,7 @@ export interface NvToolbarButton {
   title?: object | string;
   tooltip?: object | string;
   icon: string;
-  func?: NvAction | ((argument: any) => any);
+  func?: NvAction | ((any: any) => any);
   disabled?: () => boolean;
   hidden?: () => boolean;
   class?: string;

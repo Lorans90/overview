@@ -46,8 +46,10 @@
     [columns]="configurationService.visibleColumns$ | async"
     [forms]="formsDataSubject | async"
     [modifiedRowsSubject]="modifiedRowsSubject"
-    [focusedCellSubject]="focusedCellSubject"
-    [editingCellSubject]="editingCellSubject"
+    [focusedCellRowIndex]="(focusedCellSubject | async).rowIndex"
+    [focusedCellColumnKey]="(focusedCellSubject | async).columnKey"
+    [editingCellRowIndex]="(editingCellSubject | async).rowIndex"
+    [editingCellColumnKey]="(editingCellSubject | async).columnKey"
     [stillClickedInsideBodySubject]="stillClickedInsideBodySubject"
     [rootConfigChanged]="nvGridI18nService.configuration$ | async"
     (selectedRow)="toggleRowSelect($event.rowIndex, $event.mouseEvent)"
@@ -64,6 +66,8 @@
     (createNewForm)="createNewForm($event.rowId)"
     (createNewRow)="createNewRowAndFocusFirstCell()"
     (jumpToFirstInvalidCell)="jumpToFirstInvalidCell()"
+    (focusCell)="focusCell($event)"
+    (editCell)="editCell($event)"
   >
   </nv-grid-body>
   <!-- Footer row -->

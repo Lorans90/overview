@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { NvColumnConfig, NvGridConfig, NvRowHeight } from '../../../models/grid-config';
 import { ConfigurationService } from '../../../services/configuration.service';
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
@@ -7,7 +7,8 @@ import { DragDropService } from '../../../services/drag-drop.service';
 @Component({
   selector: 'nv-drop-down',
   templateUrl: './grid-setting-drop-down.component.html',
-  styleUrls: ['./grid-setting-drop-down.component.css']
+  styleUrls: ['./grid-setting-drop-down.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GridSettingDropDownComponent {
   public visible = false;

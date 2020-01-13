@@ -2,7 +2,6 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { LeftActionComponent } from './left-action.component';
 import { NvGridModule } from '../../../grid.module';
 
-import { getDataSource } from '../../../../../test/dataSource';
 import { getGridConfig } from '../../../../../test/gridConfig';
 import { FAKE_GridGlobalConfig } from '../../../services/grid-api.config';
 import { NvGridButtonsPosition } from '../../../models/grid-config';
@@ -31,7 +30,6 @@ describe('LeftActionComponent', () => {
   it('should check the checkbox and toggleRow', () => {
 
     component.rowIndex = 4;
-    component.row = getDataSource()[component.rowIndex];
     component.rowSelectType = getGridConfig().rowSelectionType;
     component.showMenuButton = getGridConfig().rowButtonsPosition === NvGridButtonsPosition.CollapsedLeft;
     component.showExpandButton = getGridConfig().expandableComponentConfig;
@@ -48,7 +46,6 @@ describe('LeftActionComponent', () => {
     component.selectRowAction(null);
     // input.click();
     fixture.detectChanges();
-    // console.log(component.row);
     // expect(input.checked).toBeTruthy();
     // expect(component.row['_checked']).toBeTruthy();
     expect(component.selectRow.emit).toHaveBeenCalled();
