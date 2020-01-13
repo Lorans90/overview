@@ -31,10 +31,7 @@ export class AuthInterceptor implements HttpInterceptor {
                         this.isRefreshTokenReadySubject.next(false);
                         return this.authService.refreshToken().pipe(
                             catchError((error) => {
-                                this.router.navigate(['login'], {
-                                    state: { systemAction: true }
-                                })
-                                    .then(navigated => navigated && this.authService.logout());
+                                this.authService.forceLogout();
                                 return throwError(error);
                             }
                             ),
@@ -45,8 +42,7 @@ export class AuthInterceptor implements HttpInterceptor {
                             }),
                             finalize(() => this.isRefreshing = false),
                             catchError((error) => {
-                                this.router.navigate(['login'])
-                                    .then(navigated => navigated && this.authService.logout());
+                                this.authService.forceLogout();
                                 return throwError(error);
                             })
                         );

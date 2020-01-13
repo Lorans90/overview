@@ -1,8 +1,9 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { NotificationsService, NotificationType } from 'src/app/shared/services/notification.service';
-import { wording } from '../wording';
+import { NotificationsService } from 'src/app/shared/services/notification.service';
 import { Wording } from 'src/app/shared/models/wording.model';
+import { wording } from '../wording';
+import { NotificationType } from 'src/app/shared/enums/notification.enum';
 
 /**
  * Handles HTTP error and shows it as notification
