@@ -1,0 +1,61 @@
+﻿using Template.Controllers.Resources;
+using Template.Extensions;
+using Template.Services;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Template.Controllers.Template
+{
+	[Route("api/v1/Template/[controller]")]
+	[EnableCors("CorsPolicy")]
+    [ApiController]
+    public class PasswordController : BaseController
+	{
+		private readonly IUsersService _usersService;
+
+		public PasswordController(IUsersService usersService)
+		{
+			_usersService = usersService;
+			_usersService.CheckArgumentIsNull(nameof(usersService));
+		}
+
+		[HttpPost("[action]")]
+		// [ValidateAntiForgeryToken]
+		[Authorize]
+		public async Task<IActionResult> ChangePassword(ChangePasswordResource model)
+		{
+			var user = await _usersService.GetCurrentUserAsync();
+			if (user == null)
+			{
+				return BadRequest("NotFound");
+			}
+
+			var result = await _usersService.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+			if (result.Succeeded)
+			{
+				return Ok();
+			}
+
+			return BadRequest(result.Error);
+		}
+
+
+		[HttpPost("[action]")]
+//		[ValidateAntiForgeryToken]
+		[Authorize(Policy = CustomRoles.Admin)]
+		public async Task<IActionResult> ResetPassword(ResetPasswordResource model)
+		{
+			var user = await _usersService.FindUserAsync(model.UserId);
+			if (user == null)
+			{
+				return BadRequest("NotFound");
+			}
+
+			await _usersService.ResetPasswordAsync(user, model.NewPassword);
+			return Ok();
+		}
+
+	}
+}

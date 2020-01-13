@@ -1,34 +1,37 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
+import { NgModule, ErrorHandler } from '@angular/core';
 
+import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { HomeComponent } from './home/home.component';
-import { CounterComponent } from './counter/counter.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
+import { registerLocaleData, CommonModule } from '@angular/common';
+import localeUS from '@angular/common/locales/en';
+import localeDE from '@angular/common/locales/de';
+import localeUK from '@angular/common/locales/en-GB';
+import { SharedModule } from './shared/shared.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AuthInterceptor } from './core/interceptors/auth.interceptor';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { GlobalErrorHandler } from './core/handlers/error.handler';
+import { ErrorInterceptor } from './core/interceptors/error.interceptor';
+
+registerLocaleData(localeDE);
+registerLocaleData(localeUK);
+registerLocaleData(localeUS);
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavMenuComponent,
-    HomeComponent,
-    CounterComponent,
-    FetchDataComponent
   ],
   imports: [
-    BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
-    HttpClientModule,
-    FormsModule,
-    RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'counter', component: CounterComponent },
-      { path: 'fetch-data', component: FetchDataComponent },
-    ])
+    CommonModule,
+    SharedModule.forRoot(),
+    AppRoutingModule,
+    BrowserAnimationsModule,
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: ErrorInterceptor, useClass: AuthInterceptor, multi: true },
+    { provide: ErrorHandler, useClass: GlobalErrorHandler },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

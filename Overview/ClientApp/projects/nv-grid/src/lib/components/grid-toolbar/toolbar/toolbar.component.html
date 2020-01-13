@@ -1,0 +1,31 @@
+<div
+  class="nv-toolbar"
+  [style.backgroundColor]="backgroundColor"
+>
+  <div
+    [title]="title"
+    class="toolbar-title"
+  >
+    {{ title }}
+  </div>
+
+  <div class="toolbar-buttons">
+    <ng-container *ngFor="let toolbarButton of toolbarButtons">
+      <nv-button
+        *ngIf="toolbarButton.hidden ? !toolbarButton.hidden() : true"
+        [class]="toolbarButton.class
+          ? 'toolbar-button ' + toolbarButton.class
+          : 'toolbar-button'"
+        [label]=" toolbarButton.title | translate"
+        [iconType]="toolbarButton.icon"
+        [disabled]="toolbarButton.disabled ? toolbarButton.disabled() : false"
+        [size]="'large'"
+        [type]="'default'"
+        [title]="toolbarButton.tooltip | translate"
+        [action]="runExternalToolbarButtonFunction(toolbarButton)"
+      >
+      </nv-button>
+    </ng-container>
+    <ng-content></ng-content>
+  </div>
+</div>

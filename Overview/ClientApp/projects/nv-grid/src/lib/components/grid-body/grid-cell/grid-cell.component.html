@@ -1,0 +1,123 @@
+<ng-container *ngIf="isEditing === false || !form;then viewMode else editMode"></ng-container>
+<ng-template #viewMode>
+  <ng-container *ngIf="columnTemplate;then customViewModeTemplate; else defaultViewModeTemplate"></ng-container>
+</ng-template>
+<ng-template #defaultViewModeTemplate>
+  <ng-container *ngIf="column.dataType === NvColumnDataType.Boolean; then booleanTemplate else defaultTemplate"></ng-container>
+</ng-template>
+<ng-template #booleanTemplate>
+  <div
+    class="grid-cell boolean-div"
+    [title]="column.customCellClickFn ? (column.tooltip | translate) : customTooltip ? (customTooltip | translate) : (cellValue | generate : column : row : rootConfigChanged)"
+    [class.linkify]="column.customCellClickFn"
+  >
+    <ng-container *ngIf="cellValue === 1 || cellValue === '1' || cellValue === true || cellValue === 'true'; then trueTemplate else falseTemplate"></ng-container>
+  </div>
+</ng-template>
+<ng-template #trueTemplate>
+  <i
+    nz-icon
+    nzType="check"
+    theme="outline"
+  >
+  </i>
+</ng-template>
+<ng-template #falseTemplate>
+  <i
+    *ngIf="cellValue === 0 || cellValue === '0' || cellValue === false || cellValue === 'false'"
+    nz-icon
+    nzType="close"
+    theme="outline"
+    class="false-icon"
+  ></i>
+</ng-template>
+<ng-template #popoverContentTemplate>
+  <ng-container *ngTemplateOutlet="column.editControl.errorPopoverContentTemplate(form)
+    ? column.editControl.errorPopoverContentTemplate(form)
+    : noAvilableActionsTemplate; context: { $implicit: form }"></ng-container>
+</ng-template>
+<ng-template #noAvilableActionsTemplate>{{ 'noAvilableActions' | translate }}</ng-template>
+<ng-template #defaultTemplate>
+  <div
+    class="grid-cell"
+    [title]="column.customCellClickFn
+      ? (column.tooltip | translate)
+      : customTooltip
+        ? (customTooltip | translate)
+        : (cellValue | generate : column : row : rootConfigChanged)"
+    [class.linkify]="column.customCellClickFn"
+  >
+    <div class="nv-cell-value">
+      {{ cellValue | generate : column : row : rootConfigChanged }}
+    </div>
+    <div
+      class="error-marker"
+      *ngIf="form && form.get(column.key).touched && error"
+      nz-popover
+      [nzPopoverTitle]="error"
+      [nzContent]="column.editControl.errorPopoverContentTemplate
+        ? popoverContentTemplate
+        : noAvilableActionsTemplate"
+    >
+      <i
+        nz-icon
+        nzType="info-circle"
+      ></i>
+    </div>
+  </div>
+</ng-template>
+<ng-template #customViewModeTemplate>
+  <div
+    class="grid-cell"
+    [title]="column.customCellClickFn
+      ? (column.tooltip | translate)
+      : customTooltip
+        ? (customTooltip | translate)
+        : (cellValue | generate : column : row : rootConfigChanged)"
+  >
+    <ng-container *ngTemplateOutlet="columnTemplate; context: {$implicit: cellValue}"></ng-container>
+    <div
+      class="error-marker"
+      *ngIf="form && form.get(column.key).touched && error"
+
+      nz-popover
+      [nzPopoverTitle]="error"
+      [nzContent]="column.editControl.errorPopoverContentTemplate
+        ? popoverContentTemplate
+        : noAvilableActionsTemplate"
+    >
+      <i
+        nz-icon
+        nzType="info-circle"
+      ></i>
+    </div>
+  </div>
+</ng-template>
+<ng-template #editMode>
+  <ng-container *ngIf="columnEditTemplate;then customEditModeTemplate else defaultEditModeTemplate"></ng-container>
+</ng-template>
+<ng-template #customEditModeTemplate>
+  <div class="grid-cell grid-cell-edit-mode">
+    <ng-container *ngTemplateOutlet="columnEditTemplate; context: {
+      $implicit: {
+        cell: cellValue,
+        form: form,
+        column: column,
+        externalEmitter: externalEmitter,
+        rowIndex: rowIndex
+      }
+    }"></ng-container>
+  </div>
+</ng-template>
+<ng-template #defaultEditModeTemplate>
+  <nv-grid-cell-editing
+    class="grid-cell grid-cell-edit-mode"
+    [form]="form"
+    [rootConfigChanged]="rootConfigChanged"
+    [cellValue]="cellValue"
+    [row]="row"
+    [column]="column"
+    (next)="jumpToCell($event)"
+    (switchCellToViewMode)="switchCellToViewMode()"
+  ></nv-grid-cell-editing>
+</ng-template>

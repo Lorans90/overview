@@ -1,0 +1,118 @@
+.notifications {
+  cursor: pointer;
+  position: relative;
+
+  .unseen-notificiation-count {
+    position: absolute;
+    top: -6px;
+    right: -5px;
+    border-radius: 50%;
+    background: #de3b1c;
+    height: 20px;
+    width: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 20px;
+    font-size: 12px;
+  }
+
+  .notification-icon {
+    font-size: 25px;
+  }
+}
+
+.popover-content {
+  width: 400px;
+  max-height: 483px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.notification {
+  border-bottom: 1px solid #e8e8e8;
+  cursor: pointer;
+  background-color: #fff;
+  padding: 12px;
+
+  .avatar-wrapper {
+    padding: 7px;
+    align-self: stretch;
+
+    img {
+      height: 24px;
+    }
+  }
+
+  .content {
+    flex: 1;
+    padding: 4px;
+  }
+
+  &:last-child {
+    border-bottom: 0;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
+
+  &:hover {
+    background-color: #324c5c;
+    color: #fff;
+
+    .date {
+      color: white !important;
+    }
+
+    img {
+      filter: invert(1) sepia(0);
+    }
+  }
+
+  .message {
+    display: inline;
+  }
+
+  .extra-info {
+    flex-direction: row;
+    align-items: center;
+
+    .date {
+      color: #8a8a8a;
+      font-size: 11px;
+    }
+
+    .id {
+      background: lightblue;
+      margin-left: 6px;
+      padding: 0px 6px;
+      font-size: 12px;
+      justify-content: center;
+      padding-top: 2px;
+      border-radius: 2px;
+      height: 17px;
+      color: #4b6973;
+    }
+  }
+
+  // https://stackoverflow.com/questions/36265026/angular-2-innerhtml-styling
+  ::ng-deep {
+
+    x-user {
+      display: inline;
+      font-weight: bold;
+    }
+
+    x-entity {
+      display: inline;
+      font-weight: bold;
+    }
+  }
+}
+
+.unseen-notification {
+  background-color: #e6eff8;
+}
+
+:host ::ng-deep .ant-popover-placement-bottomRight>.ant-popover-content>.ant-popover-arrow {
+  right: 9px !important;
+}

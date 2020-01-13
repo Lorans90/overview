@@ -1,0 +1,50 @@
+<div class="btn-edit">
+  <button
+    class="settings-dropdown-btn"
+    nz-button
+    nz-dropdown
+    [nzDropdownMenu]="menu"
+    [nzTrigger]="'click'"
+    nzPlacement="bottomRight"
+    nzType="default"
+    [disabled]="(editMode | async)"
+  >
+    <i
+      nz-icon
+      nzType="plus-circle"
+    ></i>
+  </button>
+  <nz-dropdown-menu #menu="nzDropdownMenu">
+    <ul nz-menu>
+      <li
+        nz-menu-item
+        *ngFor="let widgetListItem of widgetsList"
+        (click)="addWidget(widgetListItem.type)"
+        [attr.data-widget-item]="widgetListItem.name"
+      >
+        <i
+          nz-icon
+          [nzType]="widgetListItem.icon"
+        ></i>
+        {{ widgetListItem.name }}
+      </li>
+    </ul>
+  </nz-dropdown-menu>
+  <button
+    nz-button
+    nzType="default"
+    (click)="toggleGrid()"
+    [id]="(editMode | async) ? 'save-btn': 'edit-btn'"
+  >
+    <i
+      nz-icon
+      [nzType]="(editMode | async) ? 'save': 'edit'"
+    ></i>
+  </button>
+</div>
+<app-grid
+  [options]="options"
+  [items]="dashboardWidgetItems | async"
+  [editMode]="editMode | async"
+  (deleteWidget)="deleteWidget($event)"
+></app-grid>

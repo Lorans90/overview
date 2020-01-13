@@ -1,0 +1,29 @@
+<div
+  *ngIf="showProgressbar"
+  class="nv-progress-bar"
+  [ngStyle]="{
+    'position': 'sticky',
+    'top.px': progressbarTop
+  }"
+>
+  <nz-progress
+    *ngIf="loading"
+    [nzStatus]="'active'"
+    [nzPercent]="100"
+    [nzShowInfo]="false"
+    [nzStrokeWidth]="2"
+  >
+  </nz-progress>
+</div>
+<nz-skeleton
+  [nzParagraph]="{
+      rows: paragraphSize,
+      width: 100 + '%'
+    }"
+  [nzTitle]="false"
+  [nzActive]="true"
+  [nzLoading]="loading"
+  [ngStyle]="{
+      'margin-top.px': loading ? 5 : 0
+    }"
+></nz-skeleton>

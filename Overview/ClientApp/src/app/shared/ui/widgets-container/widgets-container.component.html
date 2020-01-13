@@ -1,0 +1,22 @@
+<app-steps *ngIf="item.type === WidgetType.Steps"></app-steps>
+<app-bars *ngIf="item.type === WidgetType.Bars"></app-bars>
+<app-circles *ngIf="item.type === WidgetType.Circles"></app-circles>
+<app-chart [widget]="item" *ngIf="item.type === WidgetType.Chart"></app-chart>
+<app-feed *ngIf="item.type === WidgetType.Feed"></app-feed>
+<div
+  *ngIf="editMode"
+  class="overlay"
+>
+  <div class="delete-widget-btn">
+    <button
+      nz-button
+      nzType="default"
+      (click)="deleteWidget.emit()"
+    >
+      <i
+        nz-icon
+        nzType="delete"
+      ></i>
+    </button>
+  </div>
+</div>

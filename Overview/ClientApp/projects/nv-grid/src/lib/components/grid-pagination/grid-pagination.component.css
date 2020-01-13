@@ -1,0 +1,16 @@
+.nv-pagination {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-top: 2px;
+  padding-left: 3px;
+  height: initial;
+  z-index: 2;
+}
+
+.total-count {
+  font-size: 14px;
+}

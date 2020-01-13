@@ -1,0 +1,164 @@
+<nz-layout class="layout">
+  <nz-layout>
+    <nz-sider
+      class="menu-sidebar"
+      nzCollapsible
+      nzWidth="256px"
+      nzBreakpoint="md"
+      [(nzCollapsed)]="isCollapsed"
+      [nzTrigger]="null"
+    >
+      <div class="sidebar-logo">
+        <a>
+          <!-- <img
+            src="../../../assets/images/aat-logo.png"
+            alt="logo"
+          > -->
+        </a>
+      </div>
+      <ul
+        nz-menu
+        nzTheme="dark"
+        nzMode="inline"
+        [nzInlineCollapsed]="isCollapsed"
+      >
+        <li
+          nz-submenu
+          nzOpen
+          [nzTitle]="wording.dashboard | translate"
+          nzIcon="dashboard"
+        >
+          <ul>
+            <li
+              nz-menu-item
+              nzMatchRouter
+            >
+              <a routerLink="/welcome/dashboard">
+                <i
+                  nz-icon
+                  nzType="line-chart"
+                ></i>
+                {{ wording.welcome | translate }}
+              </a>
+            </li>
+            <li
+              nz-menu-item
+              nzMatchRouter
+            >
+
+
+
+
+            <a routerLink="/welcome/overview">
+                <i
+                  nz-icon
+                  nzType="eye"
+                ></i>
+                {{ wording.overview | translate }}
+              </a>
+            </li>
+            <li
+              nz-menu-item
+              nzMatchRouter
+            >
+              <a>
+                <i
+                  nz-icon
+                  nzType="shop"
+                ></i>
+                Workplace
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li
+          nz-submenu
+          nzOpen
+          [nzTitle]="wording.account | translate"
+          nzIcon="form"
+        >
+          <ul>
+            <li
+              nz-menu-item
+              nzMatchRouter
+            >
+            <a routerLink="/welcome/change-password">
+              <i
+                  nz-icon
+                  nzType="lock"
+                ></i>
+                {{ wording.changePassword | translate  }}
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <div class="time">
+        {{ (time | async) | date : ((settingsService.locale | async) | dateFormat) }}
+      </div>
+    </nz-sider>
+    <nz-layout>
+      <nz-header>
+        <div class="app-header">
+          <i
+            class="trigger"
+            nz-icon
+            [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
+            (click)="isCollapsed = !isCollapsed"
+          ></i>
+
+
+
+
+          <div class="right">
+            <app-notification-logs></app-notification-logs>
+            <div class="language">
+              <a
+                [ngClass]="{'transparent': (settingsService.language | async ) === Language.en}"
+                (click)="settingsService.changeLanguage(Language.de)"
+              >
+                DE
+              </a>
+              /
+              <a
+                [ngClass]="{'transparent': (settingsService.language | async ) === Language.de}"
+                (click)="settingsService.changeLanguage(Language.en)"
+              >
+                EN
+              </a>
+              <!-- <button
+                    [ngClass]="{'transparent': (settingsService.language | async ) === Language.de}"
+                    nz-button
+                    (click)="settingsService.change(Language.en)"
+                    class="en-button"
+                  ></button> -->
+              <!-- <button
+                    [ngClass]="{'transparent': (settingsService.language | async ) === Language.en}"
+                    nz-button
+                    (click)="settingsService.change(Language.de)"
+                    class="de-button"
+                  ></button> -->
+            </div>
+            <a
+              routerLink="/login"
+              class="logout"
+              (click)="logout()"
+            >
+              <i
+                nz-icon
+                nzType="logout"
+              ></i>
+            </a>
+          </div>
+        </div>
+      </nz-header>
+      <nz-content>
+        <div class="content-wrapper">
+          <div class="main-content">
+            <router-outlet></router-outlet>
+          </div>
+        </div>
+      </nz-content>
+    </nz-layout>
+  </nz-layout>
+</nz-layout>

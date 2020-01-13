@@ -1,0 +1,17 @@
+<ng-container [formGroup]="form">
+  <input
+    #input
+    nz-input
+    class="nv-cell-edit-mode"
+    [style.width.px]="column.width"
+    [formControlName]="column.key"
+    [value]="form.get(column.key).value | translate"
+    [title]="cellValue  | generate : column : row: rootConfigChanged"
+    [type]="column.dataType === NvColumnDataType.Number ? 'number' : 'text'"
+    (keydown.enter)="jump($event)"
+    (keydown.tab)="jump($event)"
+    (keydown.shift.tab)="jump($event)"
+    (keydown.escape)="switch()"
+    (blur)="switch()"
+  >
+</ng-container>

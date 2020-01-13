@@ -1,0 +1,51 @@
+<div
+  *ngIf="gridConfig && !gridConfig.hideAllFilters"
+  class="grid-filter flex-container position-sticky-top"
+  [ngStyle]="{
+      'top.px': Constants.HEADER_HEIGHT,
+      'height.px': Constants.FILTER_HEIGHT,
+      'line-height.px': Constants.FILTER_HEIGHT
+    }"
+>
+  <div class="flex-container col-pinned-left">
+    <nv-left-action-empty
+      [rowSelectionType]="gridConfig.rowSelectionType"
+      [areAllRowsSelected]="areAllRowsSelected"
+      [selectedRowsLength]="selectedRowsLength"
+      [rowButtonsPosition]="gridConfig.rowButtonsPosition"
+      [isGridExpandable]="configurationService.isGridExpandable(gridConfig)"
+      [showRowIndex]="gridConfig.showRowIndex"
+      [isFilterRow]="true"
+      (allRowsSelected)="allRowsSelected.emit($event)"
+      (allRowsCollapsed)="allRowsCollapsed.emit()"
+    ></nv-left-action-empty>
+  </div>
+  <!-- Columns -->
+  <ng-container *ngFor="let column of columns; let colIndex=index">
+    <div
+      class="grid-filter-cell"
+      [ngStyle]="{
+        'width.px': column.width,
+        'min-width.px': column.width,
+        'left.px': configurationService.getCellLeftPosition(gridConfig, colIndex)
+      }"
+      [ngClass]="{
+        'col-pinned-left': colIndex < gridConfig.pin.pinTill,
+        'last-pinned-left': gridConfig.pin.pinTill  === colIndex + 1
+      }"
+    >
+      <nv-filter-cell
+        [column]="column"
+        (columnChange)="gridFiltered.emit()"
+      >
+      </nv-filter-cell>
+    </div>
+  </ng-container>
+  <div class="flex-container col-pinned-right">
+    <nv-right-action-empty
+      [rowButtonsPosition]="gridConfig.rowButtonsPosition"
+      [buttons]="gridConfig.buttons"
+    >
+    </nv-right-action-empty>
+  </div>
+</div>

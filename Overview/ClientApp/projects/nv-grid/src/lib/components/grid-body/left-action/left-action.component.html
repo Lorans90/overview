@@ -1,0 +1,70 @@
+<div class="left-action">
+  <div
+    *ngIf="rowSelectType === GridRowSelectionType.Checkbox"
+    class="grid-cell-left-action grid-row-select-cell"
+    [style.width.px]="Constants.CHECKBOX_COLUMN_WIDTH"
+  >
+    <label
+      nz-checkbox
+      [ngModel]="!!row['_checked']"
+      (ngModelChange)="selectRowAction($event)"
+    >
+    </label>
+  </div>
+  <div
+    *ngIf="rowSelectType === GridRowSelectionType.RadioButton"
+    class="grid-cell-left-action grid-row-select-cell"
+    [style.width.px]="Constants.RADIO_BUTTON_COLUMN_WIDTH"
+  >
+    <label
+      nz-radio
+      [ngModel]="!!row['_checked']"
+      (ngModelChange)="selectRowAction($event)"
+    >
+    </label>
+  </div>
+  <div
+    *ngIf="showMenuButton"
+    class="grid-cell-left-action menu-button-cell"
+    [style.width.px]="Constants.MENU_BUTTON_COLUMN_WIDTH"
+  >
+    <button
+      nz-button
+      [disabled]="!disableMenuButton"
+      (keydown.enter)="preventDefaultClick($event)"
+      (keydown.space)="preventDefaultClick($event)"
+      (click)="openContextMenu($event)"
+    >
+      <i
+        nz-icon
+        nzType="ellipsis"
+      >
+      </i>
+    </button>
+  </div>
+  <div
+    *ngIf="showExpandButton"
+    class="grid-cell-left-action expand-button-cell"
+    [style.width.px]="Constants.EXPAND_BUTTON_COLUMN_WIDTH"
+  >
+    <button
+      nz-button
+      (click)="openExpandView()"
+    >
+      <i
+        nz-icon
+        nzType="{{!!row['_expanded'] ? 'down': 'right' }}"
+      >
+      </i>
+    </button>
+  </div>
+
+  <div
+    *ngIf="showRowIndex"
+    class="grid-cell-left-action"
+    [style.width.px]="Constants.ROW_INDEX_COLUMN_WIDTH"
+    (click)="selectRowAction($event)"
+  >
+    {{ paging.pageSize * (paging.pageNumber - 1) + (rowIndex + 1) }}
+  </div>
+</div>

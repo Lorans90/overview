@@ -1,0 +1,33 @@
+<div
+  class="notice"
+  *ngIf="items.length === 0"
+>
+  {{wording.clickOnThe | translate}}
+  <i
+    nz-icon
+    nzType="plus-circle"
+  >
+  </i>
+  {{wording.inOrderToAddWidget | translate}}
+</div>
+<gridster
+  [options]="options"
+  #grid
+>
+  <gridster-item
+    *ngFor="let item of items"
+    [item]="item"
+    [id]="'widget-'+ item.id"
+  >
+    <app-widgets-container
+      [item]="item"
+      [editMode]="editMode"
+      (deleteWidget)="deleteWidget.emit(item)"
+    >
+    </app-widgets-container>
+  </gridster-item>
+
+
+
+
+</gridster>

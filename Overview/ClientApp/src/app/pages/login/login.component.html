@@ -1,0 +1,40 @@
+<div class="login-box">
+  <div class="title">
+    <i
+      nz-icon
+      nzType="user"
+    ></i>
+  </div>
+  <form [formGroup]="form">
+    <input
+      formControlName="username"
+      type="text"
+      nz-input
+    >
+    <input
+      formControlName="password"
+      type="password"
+      nz-input
+    >
+    <button
+      nz-button
+      [disabled]="!form.valid"
+      (click)="login()"
+    >
+      <i
+        nz-icon
+        nzType="login"
+      ></i>
+      Login
+    </button>
+
+
+  </form>
+  <a
+    class="forgot-password"
+    routerLink="/auth/registration"
+  >
+    Forgot Password?
+  </a>
+</div>
+<div class="background-image"></div>

@@ -1,0 +1,93 @@
+<div *ngIf="column.filter;else filterSpaceReplacement">
+  <form
+    [formGroup]="form"
+    [attr.data-filter-form-name]="column.key"
+  >
+    <div [ngSwitch]="column.filter.controlType">
+      <nz-select
+        *ngSwitchCase="NvFilterControl.Boolean"
+        nzAllowClear
+        nzShowSearch
+        formControlName="value"
+        nzSize="small"
+        [title]="column.tooltip ? (column.tooltip | translate) : (column.title | translate)"
+      >
+        <nz-option
+          nzValue="1"
+          [nzLabel]="'yes' | translate"
+        >
+        </nz-option>
+        <nz-option
+          nzValue="0"
+          [nzLabel]="'no' | translate"
+        ></nz-option>
+      </nz-select>
+      <nz-select
+        *ngSwitchCase="NvFilterControl.Select"
+        [nzMode]="!column.filter.multiSelect ? 'default': 'multiple'"
+        [nzMaxTagCount]="0"
+        [nzMaxTagPlaceholder]="selectListTagPlaceholder"
+        nzAllowClear
+        nzShowSearch
+        formControlName="value"
+        nzSize="small"
+        [title]="column.tooltip ? (column.tooltip | translate) : (column.title | translate)"
+      >
+        <nz-option
+          *ngFor="let item of column.filter.selectValues"
+          [nzValue]="item"
+          [nzLabel]="item != null ? item.toString() : ''"
+        ></nz-option>
+      </nz-select>
+      <ng-template
+        #selectListTagPlaceholder
+        let-selectedList
+      >
+       {{ selectedList.length }} {{ 'selected' | translate }}
+      </ng-template>
+      <nz-input-group
+        *ngSwitchCase="NvFilterControl.RangeNumber"
+        nzCompact
+        nzSize="small"
+      >
+        <input
+          class="filter-input-from"
+          type="text"
+          nz-input
+          [placeholder]="'from' | translate"
+          formControlName="value"
+        >
+        <input
+          class="filter-input-space"
+          type="text"
+          disabled
+          nz-input
+          placeholder="~"
+        >
+        <input
+          class="filter-input-until"
+          type="text"
+          nz-input
+          [placeholder]="'until' | translate"
+          formControlName="rangeUpperBound"
+        >
+      </nz-input-group>
+      <div *ngSwitchDefault>
+        <input
+          formControlName="value"
+          nz-input
+          nzSize="small"
+          [style.transition]="'unset'"
+          autocomplete="off"
+          [title]="column.tooltip ? (column.tooltip | translate) : (column.title | translate)"
+        >
+      </div>
+    </div>
+  </form>
+</div>
+<ng-template #filterSpaceReplacement>
+  <input
+    class="searchTerm filterInput"
+    disabled
+  >
+</ng-template>

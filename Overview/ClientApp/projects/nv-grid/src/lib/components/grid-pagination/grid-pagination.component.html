@@ -1,0 +1,24 @@
+<div
+  class="nv-pagination"
+  [ngStyle]="{
+    'min-height.px': Constants.PAGINATION_HEIGHT,
+    'backgroundColor': backgroundColor
+  }"
+>
+  <div class="total-count">
+    {{'pageTotalRows' | translate}}: {{totalItems}}
+  </div>
+
+  <nz-pagination
+    nzShowSizeChanger
+    [(nzPageIndex)]="currentPage"
+    [nzPageIndex]="1"
+    [nzTotal]="totalItems"
+    [nzPageSize]="paging.pageSize"
+    [nzShowQuickJumper]="showQuickJumber"
+    [nzPageSizeOptions]="possiblePageSizes"
+    (nzPageIndexChange)="changePageNumber()"
+    (nzPageSizeChange)="changePageSize($event)"
+  >
+  </nz-pagination>
+</div>

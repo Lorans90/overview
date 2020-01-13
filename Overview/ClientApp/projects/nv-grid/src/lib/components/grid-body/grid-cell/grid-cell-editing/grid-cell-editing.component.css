@@ -1,0 +1,13 @@
+.nv-cell-edit-mode {
+  height: inherit;
+  max-width: 100%;
+}
+
+input {
+  background: #ecf7ff;
+  border-radius: 0px;
+}
+
+.ng-invalid.ng-touched, .ng-invalid.ng-dirty {
+  border: 1px solid red;
+}

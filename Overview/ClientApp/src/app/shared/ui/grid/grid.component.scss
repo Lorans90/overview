@@ -1,0 +1,34 @@
+:host {
+  display: flex;
+  height: 100%;
+  position: relative;
+}
+
+gridster {
+
+  &.fit {
+    height: 100%;
+    background: rgba(0, 0, 0, 0);
+  }
+
+  gridster-preview {
+    display: none !important;
+  }
+}
+
+.settings-dropdown-btn {
+  float: right;
+}
+
+gridster-item {
+  padding: 10px;
+}
+
+.notice {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  font-family: monospace;
+  font-size: 20px;
+  text-align: center;
+}

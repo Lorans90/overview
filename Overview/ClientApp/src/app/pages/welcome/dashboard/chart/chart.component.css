@@ -1,0 +1,17 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+google-chart {
+  height: calc(100% - 26px);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+button {
+  width: fit-content;
+}
