@@ -1,5 +1,5 @@
 import { TemplateRef, Type } from '@angular/core';
-import { NvAction } from 'nv-button';
+import { NvAction } from 'nv-button/src/public_api';
 import { AsyncValidatorFn, FormGroup, ValidatorFn } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 
