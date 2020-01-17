@@ -198,12 +198,15 @@ namespace Overview
             app.UseRouting();
             app.UseCors("CorsPolicy");
             app.UseAuthorization();
+            app.UseAzureSignalR(routes => 
+            { 
+                routes.MapHub<RealTimeHub>("/realtime"); 
+            });
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
-                endpoints.MapHub<RealTimeHub>("/realtime");
             });
             app.UseSpa(spa =>
             {
