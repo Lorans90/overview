@@ -82,8 +82,8 @@ export const customersGridConfig = (actions?: {
             },
             filter: {
                 values: [],
-                controlType: NvFilterControl.Select,
-                selectValues: ['1', '2']
+                // controlType: NvFilterControl.Select,
+                // selectValues: ['1', '2']
             }
         },
         {
@@ -147,7 +147,7 @@ export const customersGridConfig = (actions?: {
             },
             filter: {
                 values: [],
-                controlType: NvFilterControl.Select,
+                // controlType: NvFilterControl.Select,
                 selectValues: [],
                 multiSelect: false
             }
@@ -161,7 +161,7 @@ export const customersGridConfig = (actions?: {
                 editable: true,
             },
             filter: {
-                controlType: NvFilterControl.Select,
+                // controlType: NvFilterControl.Select,
                 selectValues: [],
                 values: []
             }
