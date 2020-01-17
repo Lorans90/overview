@@ -8,6 +8,6 @@ export interface IAppConfig {
 }
 
 export const AppConfig: IAppConfig = {
-  apiEndpoint: 'api/v1/Template',
+  apiEndpoint: 'https://overview-demo.azurewebsites.net/api/v1/Template',
   apiSettingsPath: 'ApiSettings'
 };

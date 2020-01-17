@@ -23,5 +23,9 @@ export const wording: { [word: string]: Wording } = {
         de: 'Sie haben nicht gespeicherte Änderungen! Wenn Sie diese Seite verlassen, gehen Ihre Änderungen verloren.'
     },
     yes: { en: 'Yes', de: 'Ja' },
-    no: { en: 'No', de: 'Nein' }
+    no: { en: 'No', de: 'Nein' },
+    users: { en: 'Users', de: 'Benutzer' },
+    editUsers: { en: 'Edit users', de: 'Benutzer bearbeiten' },
+    choose: { en: 'Choose ', de: 'Auswählen' },
+
 };

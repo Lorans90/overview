@@ -1,13 +1,13 @@
 <nz-progress
-  [nzPercent]="75"
+  [nzPercent]="progress1 | async"
   nzType="circle"
 ></nz-progress>
 <nz-progress
-  [nzPercent]="70"
+  [nzPercent]="progress2 | async"
   nzType="circle"
   nzStatus="exception"
 ></nz-progress>
 <nz-progress
-  [nzPercent]="100"
+  [nzPercent]="progress3 | async"
   nzType="circle"
 ></nz-progress>

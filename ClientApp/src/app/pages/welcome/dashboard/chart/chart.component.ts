@@ -4,6 +4,7 @@ import { DataService } from 'src/app/shared/services/data.service';
 import { GridsterItem } from 'angular-gridster2';
 import { takeUntil } from 'rxjs/operators';
 import { ReplaySubject } from 'rxjs';
+import { wording } from 'src/app/core/wording';
 
 export interface Machine {
   id: string;
@@ -21,7 +22,7 @@ export class ChartComponent implements OnInit, OnDestroy {
   @Input() widget: GridsterItem;
   @Input() machineId: string;
   private componentDestroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
-
+  public wording = wording;
   constructor(private dataService: DataService) { }
 
   machines: Machine[] = [

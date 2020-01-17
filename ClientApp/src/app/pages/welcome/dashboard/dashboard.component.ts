@@ -89,7 +89,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.dashboardWidgetItems.subscribe(items => this.saveItems(items));
-    this.dataService.startConnection();
+    // this.dataService.startConnection();
   }
 
   private getItems(): GridsterItem[] {

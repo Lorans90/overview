@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Log, LogType } from '../models/log.model';
+import { Wording } from '../models/wording.model';
 
 
 export const logs: Log[] = [
@@ -58,7 +59,7 @@ export class NotificationLogsService {
     this.logsSubject.next(newLogs);
   }
 
-  public addLog(logsInfo: any): void {
+  public addLog(logsInfo: { message: Wording, subject: string, type: LogType }): void {
     const log: Log = {
       message: logsInfo.message,
       subject: logsInfo.subject,

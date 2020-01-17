@@ -88,6 +88,29 @@
             </li>
           </ul>
         </li>
+
+
+        <li
+          nz-submenu
+          nzOpen
+          [nzTitle]="wording.users | translate"
+          nzIcon="team"
+        >
+          <ul>
+            <li
+              nz-menu-item
+              routerLinkActive="active"
+            >
+              <a routerLink="/welcome/users">
+                <i
+                  nz-icon
+                  nzType="plus-circle"
+                ></i>
+                {{ wording.editUsers | translate  }}
+              </a>
+            </li>
+          </ul>
+        </li>
       </ul>
       <div class="time">
         {{ (time | async) | date : ((settingsService.locale | async) | dateFormat) }}
@@ -114,13 +137,11 @@
               notificationColor="orange"
               icon="warning"
               [logType]="LogType.warning"
-
             ></app-notification-logs>
             <app-notification-logs
               icon="bell"
               [title]="wording.notifications | translate"
               [logType]="LogType.notification"
-
             ></app-notification-logs>
             <div class="language">
               <a

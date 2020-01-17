@@ -18,7 +18,6 @@ export const customersGridConfig = (actions?: {
     gridName: 'customers',
     title: { en: 'Customers', de: 'Kunden' },
     rowButtonsPosition: NvGridButtonsPosition.ExpandedRight,
-    rowSelectionType: NvGridRowSelectionType.Checkbox,
     showRowIndex: true,
     hideSettingsButton: false,
     hideAllFilters: false,
