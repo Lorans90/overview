@@ -14,7 +14,7 @@ namespace Overview.Controllers.Users
     [Route("api/v1/Template/[controller]")]
     [EnableCors("CorsPolicy")]
     [ApiController]
-    public class AccountController : BaseController
+    public class AccountController : ControllerBase
     {
         private readonly IUsersService _usersService;
         private readonly ITokenStoreService _tokenStoreService;
@@ -100,7 +100,7 @@ namespace Overview.Controllers.Users
         public IActionResult GetUserInfo()
         {
             var claimsIdentity = User.Identity as ClaimsIdentity;
-            return Json(new { Username = claimsIdentity.Name });
+            return Ok(new { Username = claimsIdentity.Name });
         }
     }
 }

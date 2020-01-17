@@ -44,12 +44,12 @@ namespace Overview.Data
 
         public void ExecuteSqlCommand(string query)
         {
-            Database.ExecuteSqlCommand(query);
+            Database.ExecuteSqlRaw(query);
         }
 
         public void ExecuteSqlCommand(string query, params object[] parameters)
         {
-            Database.ExecuteSqlCommand(query, parameters);
+            Database.ExecuteSqlRaw(query, parameters);
         }
 
         public T GetShadowPropertyValue<T>(object entity, string propertyName) where T : IConvertible

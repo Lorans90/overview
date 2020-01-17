@@ -2,20 +2,29 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
+    </PropertyGroup>
+    <PropertyGroup>
         <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
         <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
         <IsPackable>false</IsPackable>
         <SpaRoot>ClientApp\</SpaRoot>
-        <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
-
+        <!--<DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>-->
         <!-- Set this to true if you enable server-side prerendering -->
         <BuildServerSideRenderer>false</BuildServerSideRenderer>
+        <UserSecretsId>0f156049-756e-4749-b503-5cb7ab4586c4</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AutoMapper" Version="9.0.0" />
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.0" />
+        <PackageReference Include="Microsoft.AspNetCore.AzureKeyVault.HostingStartup" Version="2.0.4" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.0" />
+        <PackageReference Include="Microsoft.Azure.SignalR" Version="1.1.1" />
+        <PackageReference Include="morelinq" Version="3.3.2" />
+        <PackageReference Include="NSwag.AspNetCore" Version="13.2.0" />
+        <PackageReference Include="System.Text.Encoding.CodePages" Version="4.7.0" />
         <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.0" />
-        <PackageReference Include="automapper" Version="7.0.1" />
-        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="5.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.NodeServices" Version="3.1.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.0" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.0" />
@@ -23,8 +32,8 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.0" />
         <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc4" />
         <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
+        <PackageReference Include="Hellang.Middleware.ProblemDetails" Version="4.0.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -34,8 +43,8 @@
         <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
     </ItemGroup>
     <ItemGroup>
-        <Folder Include="Migrations" />
         <Folder Include="Migrations\" />
+        <Folder Include="Properties\PublishProfiles" />
     </ItemGroup>
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
         <!-- Ensure Node.js is installed -->

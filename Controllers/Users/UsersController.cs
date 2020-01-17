@@ -13,7 +13,7 @@ namespace Overview.Controllers.Users
 	[Route("api/v1/Template/[controller]")]
 	[Authorize(Policy = CustomRoles.Admin)]
     [ApiController]
-    public class UsersController : BaseController
+    public class UsersController : ControllerBase
 	{
 		private readonly IUsersService usersService;
 		private readonly IRolesService rolesService;

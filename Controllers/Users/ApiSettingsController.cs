@@ -9,7 +9,7 @@ using Overview.Extensions;
 namespace Overview.Controllers.Users
 {
 	[Route("api/v1/Template/[controller]")]
-	public class ApiSettingsController : BaseController
+	public class ApiSettingsController : ControllerBase
 	{
 		private readonly IOptionsSnapshot<ApiSettings> _apiSettingsConfig;
 

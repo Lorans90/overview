@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,75 +12,42 @@ using Overview.Controllers.Resources;
 using Overview.Services;
 using Overview.Data;
 using AutoMapper;
+using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Overview.Extensions;
-using Microsoft.OpenApi.Models;
 using Overview.Hubs;
 using Overview.Workers;
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using NJsonSchema.Generation;
+using NSwag;
+using NSwag.AspNetCore;
+
 
 namespace Overview
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, IHostingEnvironment env)
+        public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-
-            CurrentEnvironment = env;
         }
 
         public IConfiguration Configuration { get; }
-        public IHostingEnvironment CurrentEnvironment { get; }
-
-        public bool IsEnvironmentTest
-        {
-            get { return CurrentEnvironment.IsEnvironment("Test"); }
-        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<BearerTokensOptions>(options => Configuration.GetSection("BearerTokens").Bind(options));
-            services.Configure<ApiSettings>(options => Configuration.GetSection("ApiSettings").Bind(options));
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddAutoMapper(typeof(Startup));
-            services.AddScoped<IUnitOfWork, ApplicationDbContext>();
-            services.AddScoped<IUsersService, UsersService>();
-            services.AddScoped<IRolesService, RolesService>();
-            services.AddScoped<ISecurityService, SecurityService>();
-            services.AddScoped<ITokenStoreService, TokenStoreService>();
-            services.AddScoped<ITokenValidatorService, TokenValidatorService>();
-            services.AddHostedService<ChartWorker>();
-            if (!IsEnvironmentTest)
-            {
-                services.AddDbContext<ApplicationDbContext>(options =>
-                {
-                    options.UseSqlServer(
-                        Configuration.GetConnectionString("DefaultConnection"),
-                        serverDbContextOptionsBuilder =>
-                        {
-                            var minutes = (int)TimeSpan.FromMinutes(3).TotalSeconds;
-                            serverDbContextOptionsBuilder.CommandTimeout(minutes);
-                            serverDbContextOptionsBuilder.EnableRetryOnFailure();
-                        });
-                });
-            }
-
-            // Only needed for custom roles.
             services.AddAuthorization(options =>
             {
                 options.AddPolicy(CustomRoles.Admin, policy => policy.RequireRole(CustomRoles.Admin));
                 options.AddPolicy(CustomRoles.User, policy => policy.RequireRole(CustomRoles.User));
             });
-            services.AddSignalR();
             services
                 .AddAuthentication(options =>
                 {
@@ -141,77 +107,118 @@ namespace Overview
                     };
                 });
 
+            //---------------------------
+            services.Configure<BearerTokensOptions>(options => Configuration.GetSection("BearerTokens").Bind(options));
+            services.Configure<ApiSettings>(options => Configuration.GetSection("ApiSettings").Bind(options));
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddProblemDetails();
+            services.AddAutoMapper(typeof(Startup));
+            services.AddSignalR();
+
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
                     builder => builder
-                        .WithOrigins("http://localhost:5000", "https://localhost:5001") //Note:  The URL must be specified without a trailing slash (/).
+                        .WithOrigins("http://localhost:5000",
+                            "https://localhost:5001") //Note:  The URL must be specified without a trailing slash (/).
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials());
             });
 
-            services.AddMvc(options =>
-            {
-                options.EnableEndpointRouting = false;
-                options.Filters.Add(typeof(ValidateModelAttribute));
-            });
-
-            if (!IsEnvironmentTest)
-            {
-                services.AddSwaggerGen(c =>
+            services.AddControllers()
+                .ConfigureApiBehaviorOptions(o => o.SuppressMapClientErrors = false)
+                .SetCompatibilityVersion(CompatibilityVersion.Latest)
+                .AddNewtonsoftJson(o =>
                 {
-                    c.SwaggerDoc("v1", new OpenApiInfo
-                    { Title = "My API", Version = "v1" });
+                    o.SerializerSettings.Converters.Add(new StringEnumConverter());
+                    o.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                 });
-            }
-        }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app)
-        {
-            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
+            services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
+            services.AddScoped<IUnitOfWork, ApplicationDbContext>();
+            services.AddScoped<IUsersService, UsersService>();
+            services.AddScoped<IRolesService, RolesService>();
+            services.AddScoped<ISecurityService, SecurityService>();
+            services.AddScoped<ITokenStoreService, TokenStoreService>();
+            services.AddScoped<ITokenValidatorService, TokenValidatorService>();
+            services.AddHostedService<ChartWorker>();
 
-            if (!IsEnvironmentTest)
+            services.AddDbContext<ApplicationDbContext>(options =>
             {
-                app.UseStaticFiles();
-                //app.UseCookiePolicy();
-            }
-
-            app.UseAuthentication();
-            app.UseCors("CorsPolicy");
-            app.UseSignalR(routes =>
-            {
-                routes.MapHub<RealTimeHub>("/realtime");
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("DefaultConnection"),
+                    serverDbContextOptionsBuilder =>
+                    {
+                        var minutes = (int) TimeSpan.FromMinutes(3).TotalSeconds;
+                        serverDbContextOptionsBuilder.CommandTimeout(minutes);
+                        serverDbContextOptionsBuilder.EnableRetryOnFailure();
+                    });
             });
             
-            app.UseMvc(routes =>
+            ConfigureOptions(services);
+        }
+
+        private void ConfigureOptions(IServiceCollection services)
+        {
+            
+        }
+
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsProduction())
             {
-                routes.MapRoute(
+                app.UseHsts();
+            }
+
+            app.UseProblemDetails();
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseHttpsRedirection();
+            
+
+            app.UseStaticFiles();
+            
+
+            if (!env.IsDevelopment())
+            {
+                app.UseSpaStaticFiles();
+            }
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller}/{action=Index}/{id?}");
+                    pattern: "{controller}/{action=Index}/{id?}");
+                endpoints.MapHub<RealTimeHub>("/realtime");
+            });
+            app.UseSpa(spa =>
+            {
+                // To learn more about options for serving an Angular SPA from ASP.NET Core,
+                // see https://go.microsoft.com/fwlink/?linkid=864501
+
+                spa.Options.SourcePath = "ClientApp";
+
+                if (env.IsDevelopment())
+                {
+                    spa.UseAngularCliServer(npmScript: "start");
+                }
             });
 
-            if (!IsEnvironmentTest)
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI(options =>
-                {
-                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Template API V1");
-                });
-                app.UseSpa(spa =>
-                {
-                    // To learn more about options for serving an Angular SPA from ASP.NET Core,
-                    // see https://go.microsoft.com/fwlink/?linkid=864501
- 
-                    spa.Options.SourcePath = "ClientApp";
- 
-                    if (CurrentEnvironment.IsDevelopment())
-                    {
-                        spa.UseAngularCliServer(npmScript: "start");
-                    }
-                });
-            }
+
+
+           
+
+            app.UseCors("CorsPolicy");
         }
     }
 }

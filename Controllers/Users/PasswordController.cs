@@ -11,7 +11,7 @@ namespace Overview.Controllers.Users
 	[Route("api/v1/Template/[controller]")]
 	[EnableCors("CorsPolicy")]
     [ApiController]
-    public class PasswordController : BaseController
+    public class PasswordController : ControllerBase
 	{
 		private readonly IUsersService _usersService;
 
