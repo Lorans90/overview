@@ -36,7 +36,7 @@ namespace Overview.Workers
                     machine4 = randomVal4,
                 };
 
-                await _hubContext.Clients.All.BroadcastMessage(machines);
+                // await _hubContext.Clients.All.BroadcastMessage(machines);
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
                 await Task.Delay(1000, stoppingToken);
             }
