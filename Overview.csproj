@@ -20,7 +20,6 @@
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.0" />
         <PackageReference Include="Microsoft.AspNetCore.AzureKeyVault.HostingStartup" Version="2.0.4" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.0" />
-        <PackageReference Include="Microsoft.Azure.SignalR" Version="1.1.1" />
         <PackageReference Include="morelinq" Version="3.3.2" />
         <PackageReference Include="NSwag.AspNetCore" Version="13.2.0" />
         <PackageReference Include="System.Text.Encoding.CodePages" Version="4.7.0" />
@@ -33,6 +32,7 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.0" />
         <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
         <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
+        <PackageReference Include="Microsoft.Azure.SignalR" Version="1.1.1" />
         <PackageReference Include="Hellang.Middleware.ProblemDetails" Version="4.0.0" />
     </ItemGroup>
 
@@ -60,7 +60,6 @@
         <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
         <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
         <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- --prod" />
-        <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build:ssr -- --prod" Condition=" '$(BuildServerSideRenderer)' == 'true' " />
 
         <!-- Include the newly-built files in the publish output -->
         <ItemGroup>

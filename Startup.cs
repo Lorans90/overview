@@ -12,7 +12,7 @@ using Overview.Controllers.Resources;
 using Overview.Services;
 using Overview.Data;
 using AutoMapper;
-using Hellang.Middleware.ProblemDetails;
+// using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Overview.Extensions;
@@ -117,15 +117,17 @@ namespace Overview
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddProblemDetails();
+            // services.AddProblemDetails();
             services.AddAutoMapper(typeof(Startup));
-            services.AddSignalR();
+            services.AddSignalR()
+                .AddAzureSignalR();
 
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
                     builder => builder
                         .WithOrigins("http://localhost:5000",
+                        "https://overview-demo.azurewebsites.net",
                             "https://localhost:5001") //Note:  The URL must be specified without a trailing slash (/).
                         .AllowAnyMethod()
                         .AllowAnyHeader()
@@ -141,7 +143,7 @@ namespace Overview
                     o.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                 });
 
-            services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
+            services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist/Overview"; });
             services.AddScoped<IUnitOfWork, ApplicationDbContext>();
             services.AddScoped<IUsersService, UsersService>();
             services.AddScoped<IRolesService, RolesService>();
@@ -174,14 +176,14 @@ namespace Overview
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
             if (env.IsProduction())
             {
                 app.UseHsts();
             }
 
-            app.UseProblemDetails();
+            // app.UseProblemDetails();
             app.UseAuthentication();
-            app.UseAuthorization();
 
             app.UseHttpsRedirection();
             
@@ -194,6 +196,8 @@ namespace Overview
                 app.UseSpaStaticFiles();
             }
             app.UseRouting();
+            app.UseCors("CorsPolicy");
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -218,7 +222,7 @@ namespace Overview
 
            
 
-            app.UseCors("CorsPolicy");
+            
         }
     }
 }
