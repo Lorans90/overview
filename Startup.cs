@@ -146,6 +146,7 @@ namespace Overview
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist/Overview"; });
             services.AddScoped<IUnitOfWork, ApplicationDbContext>();
             services.AddScoped<IUsersService, UsersService>();
+            services.AddScoped<IRecievesService, ReceivesService>();
             services.AddScoped<IRolesService, RolesService>();
             services.AddScoped<ISecurityService, SecurityService>();
             services.AddScoped<ITokenStoreService, TokenStoreService>();
@@ -163,7 +164,7 @@ namespace Overview
                         serverDbContextOptionsBuilder.EnableRetryOnFailure();
                     });
             });
-            
+            services.AddSwaggerDocument();
             ConfigureOptions(services);
         }
 
@@ -190,7 +191,9 @@ namespace Overview
 
             app.UseStaticFiles();
             
-
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
+            
             if (!env.IsDevelopment())
             {
                 app.UseSpaStaticFiles();

@@ -25,6 +25,7 @@ namespace Overview.Data
         public virtual DbSet<Role> Roles { set; get; }
         public virtual DbSet<UserRole> UserRoles { get; set; }
         public virtual DbSet<UserToken> UserTokens { get; set; }
+        public virtual DbSet<Receive> Receives { get; set; }
      
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -22,7 +22,7 @@ namespace Overview.Mappings
                     }
                                        )));
             CreateMap<SaveUserResource, User>();
-           
+            CreateMap<ReceiveResource, Receive>();
         }
     }
 }
