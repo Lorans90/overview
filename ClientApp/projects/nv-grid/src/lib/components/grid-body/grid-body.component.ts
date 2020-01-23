@@ -58,7 +58,7 @@ export class GridBodyComponent implements OnInit, OnChanges, OnDestroy {
   @Input() private stillClickedInsideBodySubject: BehaviorSubject<boolean>;
   @Input() rootConfigChanged: NvGridI18nInterface;
   @Input() columns: NvColumnConfig[];
-  @Input() selectedRowsSubject: BehaviorSubject<any[]>;
+  @Input() selectedRows: any[];
 
   @Output() selectedRow = new EventEmitter<{ rowIndex: number, mouseEvent: MouseEvent }>();
   @Output() expandedComponent = new EventEmitter<{ rowIndex: number }>();

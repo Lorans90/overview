@@ -16,7 +16,6 @@
 >
   <!-- Header row -->
   <nv-grid-header
-    *ngIf="gridConfig"
     [gridConfig]="gridConfig"
     [columns]="configurationService.visibleColumns$ | async"
     [selectedRowsLength]="(selectedRowsSubject | async).length"
@@ -42,7 +41,7 @@
     [isLoading]="(gridDataService.isLoading$ | async) || (isLoading | async)"
     [rows]="rows | paging : gridConfig.paging : !!this.gridConfig.url"
     [gridConfig]="gridConfig"
-    [selectedRowsSubject]="selectedRowsSubject"
+    [selectedRows]="selectedRowsSubject | async"
     [columns]="configurationService.visibleColumns$ | async"
     [forms]="formsDataSubject | async"
     [modifiedRowsSubject]="modifiedRowsSubject"

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import {
   NvButton,
   NvGridButtonsPosition,
@@ -9,7 +9,8 @@ import { GridUtilsService } from '../../services/grid-utils.service';
 @Component({
   selector: 'nv-right-action-empty',
   templateUrl: './right-action-empty.component.html',
-  styleUrls: ['./right-action-empty.component.css']
+  styleUrls: ['./right-action-empty.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RightActionEmptyComponent implements OnInit {
   @Input() rowButtonsPosition: NvGridButtonsPosition;

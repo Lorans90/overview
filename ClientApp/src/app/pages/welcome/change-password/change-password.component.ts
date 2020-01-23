@@ -38,7 +38,6 @@ export class ChangePasswordComponent implements OnInit {
   submitForm() {
     this.userService.changePassword(this.form.value)
       .subscribe(() => {
-        this.form.reset();
         this.authService.forceLogout();
       });
     // this.messageboxService.showNotification('Neues Passwort wurde gespeichert', '', 'success');

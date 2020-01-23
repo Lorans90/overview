@@ -15,7 +15,7 @@ import { GridSettingDropDownComponent } from './components/grid-toolbar/grid-set
 import { LeftActionComponent } from './components/grid-body/left-action/left-action.component';
 import { RightActionComponent } from './components/grid-body/right-action/right-action.component';
 import { de_DE, en_US, NgZorroAntdModule, NZ_I18N } from 'ng-zorro-antd';
-import { NvButtonModule } from 'nv-button/src/public_api';
+import { NvButtonModule } from 'nv-button';
 import { ToolbarComponent } from './components/grid-toolbar/toolbar/toolbar.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DragDropModule } from '@angular/cdk/drag-drop';

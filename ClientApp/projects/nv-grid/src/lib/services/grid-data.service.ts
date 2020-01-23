@@ -13,7 +13,7 @@ import {
   GridQueryPayloadForExcelExportConfig,
   NvKeyValuePair
 } from '../models/grid-query-payload-config';
-import { filter, map, switchMap, tap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { GridQueryResult } from '../models/grid-query-result';
 import { GRID_GLOBAL_CONFIG, GridGlobalConfig } from './grid-api.config';
 
@@ -37,7 +37,6 @@ const httpExcelOptions = {
 @Injectable()
 export class GridDataService {
   public configChanged = new ReplaySubject<NvGridConfig>(1);
-  public gridConf: NvGridConfig;
   private isLoadingSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public isLoading$ = this.isLoadingSubject.asObservable();
   private rawData: BehaviorSubject<GridQueryResult> = new BehaviorSubject<GridQueryResult>({
@@ -54,22 +53,16 @@ export class GridDataService {
   ) {
     this.configChanged
       .pipe(
-        filter((config: any) => config.url),
-        tap((conf: any) => {
-          this.isLoadingSubject.next(true);
-          this.gridConf = conf;
-          return conf;
-        }),
-        switchMap((config: any) => this.sendHttpRequest(config))
+        switchMap((config: NvGridConfig) => this.sendHttpRequest(config))
       )
       .subscribe((response: GridQueryResult) => {
-          // Navido 2.0 backed works in this form:
-          if (response.data) {
-            response = response.data;
-          }
-          this.rawData.next(response);
-          this.isLoadingSubject.next(false);
-        },
+        // Navido 2.0 backed works in this form:
+        if (response.data) {
+          response = response.data;
+        }
+        this.rawData.next(response);
+        this.isLoadingSubject.next(false);
+      },
         (error: HttpErrorResponse) => {
           console.error('grid can not load the dialogData!', error);
           const emptyResult: GridQueryResult = {
@@ -115,13 +108,27 @@ export class GridDataService {
   }
 
   private sendHttpRequest(config: NvGridConfig): Observable<GridQueryResult> {
+    this.isLoadingSubject.next(true);
+
     const queryPayload = this.getQueryPayload(config);
     if (config.url.method === 'POST') {
-      return this.http.post<GridQueryResult>(`${this.globalConfig.apiEndpoint}/${config.url.endPoint}`, queryPayload, httpOptions);
+      return this.http.post<GridQueryResult>(`${this.globalConfig.apiEndpoint}/${config.url.endPoint}`, queryPayload, httpOptions)
+        .pipe(map(response => this.validateResponse(config, response)));
     } else {
       const queryString = JSON.stringify(queryPayload);
-      return this.http.get<GridQueryResult>(`${this.globalConfig.apiEndpoint}/${config.url.endPoint}?queryObject=${queryString}`);
+      return this.http.get<GridQueryResult>(`${this.globalConfig.apiEndpoint}/${config.url.endPoint}?queryObject=${queryString}`)
+        .pipe(map(response => this.validateResponse(config, response)));
     }
+  }
+
+  private validateResponse(config: NvGridConfig, response: GridQueryResult): GridQueryResult {
+    if (config.url.response) {
+      response.items = response[config.url.response];
+      if (!response.totalItems) {
+        response.totalItems = response.items.length;
+      }
+    }
+    return response;
   }
 
 
@@ -180,9 +187,9 @@ export class GridDataService {
   private getColumnName(column: NvColumnConfig): string {
     const columnNameLowerCase =
       column
-      && column.filter
-      && column.filter.keys
-      && column.filter.keys.length > 0
+        && column.filter
+        && column.filter.keys
+        && column.filter.keys.length > 0
         ? column.filter.keys[0]
         : column.key;
     return this.toUppercaseFirstChar(columnNameLowerCase);

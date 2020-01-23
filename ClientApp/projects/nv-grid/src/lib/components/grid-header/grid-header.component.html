@@ -39,7 +39,7 @@
             'min-width.px': column.width,
             'max-width.px': column.width,
             'left.px': configurationService.getCellLeftPosition(gridConfig, colIndex)
-          }"
+        }"
         [column]="column"
         [title]="column.tooltip ? (column.tooltip | translate) : !gridConfig.tooltipDisabled? (column.title | translate) : ''"
         (contextmenu)="handleContextMenu(colIndex, $event)"

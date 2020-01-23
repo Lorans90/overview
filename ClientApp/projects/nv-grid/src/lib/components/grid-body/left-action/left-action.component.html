@@ -30,7 +30,6 @@
   >
     <button
       nz-button
-      [disabled]="!disableMenuButton"
       (keydown.enter)="preventDefaultClick($event)"
       (keydown.space)="preventDefaultClick($event)"
       (click)="openContextMenu($event)"

@@ -1,12 +1,12 @@
 import { TemplateRef, Type } from '@angular/core';
-import { NvAction } from 'nv-button/src/public_api';
+import { NvAction } from 'nv-button';
 import { AsyncValidatorFn, FormGroup, ValidatorFn } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 
 export interface NvGridConfig {
   url?: NvUrlConfig;
   gridName: string;
-  title?: object | string;
+  title?: Object | string;
   paging?: NvPagination;
   sortBy?: string;
   isSortAscending?: boolean;
@@ -53,12 +53,13 @@ export interface NvStyles {
 export interface NvUrlConfig {
   method: 'POST' | 'GET';
   endPoint: string;
+  response?: string;
 }
 
 export interface NvColumnConfig {
   key: string;
-  title?: object | string;
-  tooltip?: object | string;
+  title?: Object | string;
+  tooltip?: Object | string;
   customTooltip?: (row: any) => any;
   dataType?: NvColumnDataType;
   decimalDigitsInfo?: string;
@@ -130,7 +131,7 @@ export interface NvPagination {
 
 export interface NvFilterType {
   keys?: string[];
-  values: any[];
+  values?: any[];
   controlType?: NvFilterControl;
   selectValues?: string[];
   multiSelect?: boolean;
@@ -140,10 +141,10 @@ export interface NvFilterType {
 export type PagingSize = 3 | 10 | 25 | 50 | 100;
 
 export interface NvButton {
-  name?: object | string;
+  name?: Object | string;
   icon: string;
-  tooltip?: object | string;
-  description: object | string;
+  tooltip?: Object | string;
+  description: Object | string;
   func: (row: any, rowIndex: number) => any;
   hidden?: boolean | ((row: any) => boolean);
   disabled?: boolean | ((row: any) => boolean);
@@ -152,7 +153,7 @@ export interface NvButton {
 }
 
 export interface NvFooter {
-  label?: object | string;
+  label?: Object | string;
   operation?: NvOperation | ((rows: any[]) => any);
   disableCustomFormat?: boolean;
 }
@@ -163,8 +164,8 @@ export interface NvExpandedRowEvent {
 }
 
 export interface NvToolbarButton {
-  title?: object | string;
-  tooltip?: object | string;
+  title?: Object | string;
+  tooltip?: Object | string;
   icon: string;
   func?: NvAction | ((any: any) => any);
   disabled?: () => boolean;
@@ -203,8 +204,8 @@ export enum NvFilterControl {
   RangeNumber,
 }
 
-export type GridLocale = 'de-DE' | 'en-US' | 'en-GB';
-export type GridLanguage = 'de' | 'en';
+export type GridLocale = 'de-DE' | 'en-US' | 'en-GB' | string;
+export type GridLanguage = 'de' | 'en' | string;
 
 // @dynamic
 export class NvGridConstants {

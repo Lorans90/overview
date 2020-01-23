@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import {
   NvButton,
   NvColumnConfig,
@@ -13,7 +13,6 @@ import { ConfigurationService } from '../../services/configuration.service';
   selector: 'nv-grid-header',
   templateUrl: './grid-header.component.html',
   styleUrls: ['./grid-header.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GridHeaderComponent {
   @Input() gridConfig: NvGridConfig;

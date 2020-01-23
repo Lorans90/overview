@@ -21,7 +21,7 @@ interface FilterValue {
 
 export class FilterCellComponent implements OnInit, OnDestroy {
   @Input() column: NvColumnConfig;
-  @Output() columnChange: EventEmitter<NvColumnConfig> = new EventEmitter<NvColumnConfig>();
+  @Output() columnChange: EventEmitter<void> = new EventEmitter<void>();
 
   public NvFilterControl = NvFilterControl;
   public form: FormGroup;
@@ -35,6 +35,19 @@ export class FilterCellComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    if (this.column.filter) {
+      this.column.filter.form = this.form;
+      if (this.column.filter.controlType === NvFilterControl.RangeNumber) {
+        this.form.reset({
+          value: this.column.filter.values[0],
+          rangeUpperBound: this.column.filter.values[1]
+        });
+      } else {
+        this.form.reset({
+          value: this.column.filter.values[0]
+        });
+      }
+    }
     this.form.valueChanges
       .pipe(
         takeUntil(this.componentDestroyed$),
@@ -51,22 +64,8 @@ export class FilterCellComponent implements OnInit, OnDestroy {
               ? [formValue.value]
               : [];
         }
-        this.columnChange.emit(this.column);
+        this.columnChange.emit();
       });
-
-    if (this.column.filter && this.column.filter.values) {
-      this.column.filter.form = this.form;
-      if (this.column.filter.controlType === NvFilterControl.RangeNumber) {
-        this.form.reset({
-          value: this.column.filter.values[0],
-          rangeUpperBound: this.column.filter.values[1]
-        });
-      } else {
-        this.form.reset({
-          value: this.column.filter.values[0]
-        });
-      }
-    }
   }
 
   ngOnDestroy() {

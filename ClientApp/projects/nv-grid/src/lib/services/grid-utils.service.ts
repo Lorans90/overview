@@ -136,6 +136,9 @@ export class GridUtilsService {
           column.dataType = NvColumnDataType.String;
         }
         if (column.filter) {
+          if (column.filter.values === undefined) {
+            column.filter.values = [];
+          }
           switch (column.filter.controlType) {
             case undefined: {
               column.filter.controlType = NvFilterControl.FreeText;
@@ -144,6 +147,12 @@ export class GridUtilsService {
             case NvFilterControl.RangeNumber: {
               if (column.filter.values === undefined) {
                 column.filter.values = ['', ''];
+              }
+              break;
+            }
+            case NvFilterControl.Select: {
+              if (column.filter.selectValues === undefined) {
+                column.filter.selectValues = [];
               }
               break;
             }

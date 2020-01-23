@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { GRID_GLOBAL_CONFIG } from '../services/grid-api.config';
+import { GRID_GLOBAL_CONFIG, GridGlobalConfig } from '../services/grid-api.config';
 import { BehaviorSubject } from 'rxjs';
 import { de_DE, en_US, NzI18nService } from 'ng-zorro-antd';
 import { GridLanguage, GridLocale } from '../models/grid-config';
@@ -22,13 +22,13 @@ export class NvGridI18nService {
 
   // inject gotten tokens from forRoot()
   constructor(
-    @Inject(GRID_GLOBAL_CONFIG) private gridGlobalConfig,
+    @Inject(GRID_GLOBAL_CONFIG) private gridGlobalConfig: GridGlobalConfig,
     private nzI18n: NzI18nService
   ) {
     if (this.gridGlobalConfig) {
       this.setConfiguration(
         {
-          gridLanguage: this.gridGlobalConfig.gridLanguage,
+          gridLanguage: this.gridGlobalConfig.language,
           gridLocale: this.gridGlobalConfig.locale
         });
     }
@@ -41,9 +41,9 @@ export class NvGridI18nService {
   setConfiguration(configuration: NvGridI18nInterface): void {
     this.configuration.next(configuration);
     this.nzI18n.setLocale(
-      configuration.gridLanguage === 'en'
-        ? en_US
-        : de_DE
+      configuration.gridLanguage === 'de'
+        ? de_DE
+        : en_US
     );
   }
 }

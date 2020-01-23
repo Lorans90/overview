@@ -167,6 +167,8 @@ export class DataSourceService {
       && (
         cellStringValue === false
         || cellStringValue === 'false'
+        || cellStringValue === null
+        || cellStringValue === undefined
         || cellStringValue === 0
         || cellStringValue === '0'
       )
@@ -194,5 +196,28 @@ export class DataSourceService {
 
   private isNumber(n: any): boolean {
     return n != null && !isNaN(parseFloat(n)) && isFinite(n);
+  }
+
+  public setUniqueSelectValuesToColumns(columns: NvColumnConfig[], dataSource: any[]) {
+    columns.forEach(column => {
+      if (column.filter && column.filter.controlType === NvFilterControl.Select) {
+        column.filter.selectValues =
+          this.getUniqueSelectFilterValues(
+            column.key,
+            dataSource
+          );
+      }
+    });
+  }
+
+  private getUniqueSelectFilterValues(columnName: string, dataSource: any[]): any[] {
+    return dataSource.reduce((acc: any[], cur) => {
+      const toCheck = new TranslatePipe(this.nvGridI18nService).transform(cur[columnName]);
+      if (acc.indexOf(toCheck) === -1) {
+        acc.push(toCheck);
+      }
+      return acc;
+    }
+      , []);
   }
 }

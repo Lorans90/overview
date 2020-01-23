@@ -350,6 +350,7 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
         this.dataSource,
         this.nvGridI18nService.getConfiguration
       );
+      this.setUniqueSelectValues();
     } else {
       this.rows = this.dataSource;
     }
@@ -358,7 +359,7 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private applySortingToDataSource() {
-    if (this.gridConfig.sortBy) {
+    if (this.gridConfig && this.gridConfig.sortBy) {
       this.dataSource = this.dataSourceService.applySortingToDataSource(
         this.gridConfig.sortBy,
         this.gridConfig.isSortAscending,
@@ -368,7 +369,7 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public applySorting() {
-    if (this.gridConfig.sortBy) {
+    if (this.gridConfig && this.gridConfig.sortBy) {
       this.rows = [
         ...this.dataSourceService.applySortingToDataSource(
           this.gridConfig.sortBy,
@@ -409,7 +410,7 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public checkLocalStorageForChanges() {
-    if (this.gridConfig.editForm && this.gridConfig.editForm.enableLocalStorageService) {
+    if (this.gridConfig && this.gridConfig.editForm && this.gridConfig.editForm.enableLocalStorageService) {
       const modfidiedRows: any[] = this.localStorageService
         .getLocal(this.gridConfig.gridName + '.unsaved.changes');
       if (modfidiedRows) {
@@ -419,7 +420,7 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   public applyLocalStorageChanges() {
-    if (this.gridConfig.editForm && this.gridConfig.editForm.enableLocalStorageService) {
+    if (this.gridConfig && this.gridConfig.editForm && this.gridConfig.editForm.enableLocalStorageService) {
       this.modifiedRowsSubject.value.forEach((modfidiedRow: any) => {
         const foundRowIndex = this.dataSource.findIndex(row => row.id === modfidiedRow.id);
         if (foundRowIndex > -1) {
@@ -473,6 +474,10 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
         }
       }
     }
+  }
+
+  public areAllRowsSelected(): boolean {
+    return this.selectedRowsSubject.value.length === this.rows.length;
   }
 
   public isAnyRowSelected(): boolean {
@@ -727,6 +732,10 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
     this.stillClickedInsideBodySubject.next(true);
   }
 
+  private generateId() {
+    return Math.floor(Math.random() * 10000000) + 1000;
+  }
+
   public createNewRow(rowtoCreate?: any) {
     const newRow: any = rowtoCreate ? rowtoCreate : {};
     if (!rowtoCreate) {
@@ -737,7 +746,7 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
         }
       });
 
-      newRow['id'] = 'nv-' + (Math.floor(Math.random() * 1000000) + 1000);
+      newRow['id'] = 'nv-' + this.generateId();
     }
     if (this.rows) {
       this.rows = [...this.rows, newRow];
@@ -804,9 +813,8 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
 
   private initConfig(columns: NvColumnConfig[]): NvGridConfig {
     return ({
-      gridName: 'grid',
+      gridName: 'nv-grid' + this.generateId(),
       columns: columns,
-      hideAllFilters: true
     });
   }
 
@@ -919,5 +927,12 @@ export class GridComponent implements OnInit, OnDestroy, OnChanges {
   clearUnsavedChanges() {
     this.modifiedRowsSubject.next([]);
     this.localStorageService.removeLocal(this.gridConfig.gridName + '.unsaved.changes');
+  }
+
+  private setUniqueSelectValues() {
+    this.dataSourceService.setUniqueSelectValuesToColumns(
+      this.gridConfig.columns,
+      this.rows
+    );
   }
 }
