@@ -25,9 +25,6 @@ export class AuthService {
         return localStorage.getItem(this.localStorageKey);
     }
 
-    // public login(user?: User): Observable<Tokens> {
-    //     return this.httpClient.post<Tokens>('http://localhost:5000/api/user-account/login', { user });
-    // }
     login(credentials: LoginUser): Observable<any> {
         const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
         return this.httpClient.post<Tokens>(`${this.appConfig.apiEndpoint}/${this.apiConfigService.configuration.loginPath}`,

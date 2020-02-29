@@ -8,7 +8,7 @@
   white-space: nowrap;
   display: flex;
   flex-direction: row;
-  border: #d7d7d7 solid 0.4px;
+  border-bottom: #d7d7d7 solid 0.4px;
   font-size: 14px;
   text-align: center;
   vertical-align: middle;

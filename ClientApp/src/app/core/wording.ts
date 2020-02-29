@@ -26,6 +26,7 @@ export const wording: { [word: string]: Wording } = {
     no: { en: 'No', de: 'Nein' },
     users: { en: 'Users', de: 'Benutzer' },
     editUsers: { en: 'Edit users', de: 'Benutzer bearbeiten' },
-    choose: { en: 'Choose ', de: 'Auswählen' },
+    choose: { en: 'Choose', de: 'Auswählen' },
+    devices: { en: 'Devices', de: 'Geräte' },
 
 };

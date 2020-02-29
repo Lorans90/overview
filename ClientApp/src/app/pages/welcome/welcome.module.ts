@@ -9,6 +9,8 @@ import { CommonModule } from '@angular/common';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { OverviewComponent } from './overview/overview.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
+import { DevicesComponent } from './devices/devices.component';
+import { UsersComponent } from './users/users.component';
 
 @NgModule({
   imports: [
@@ -16,6 +18,13 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
     WelcomeRoutingModule,
     SharedModule
   ],
-  declarations: [WelcomeComponent, DashboardComponent, OverviewComponent, ChangePasswordComponent],
+  declarations: [
+    WelcomeComponent,
+    DashboardComponent,
+    OverviewComponent,
+    ChangePasswordComponent,
+    DevicesComponent,
+    UsersComponent
+  ],
 })
 export class WelcomeModule { }

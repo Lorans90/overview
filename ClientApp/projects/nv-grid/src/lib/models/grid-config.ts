@@ -1,12 +1,12 @@
 import { TemplateRef, Type } from '@angular/core';
-import { NvAction } from 'nv-button';
+import { NvAction } from 'nv-button/src/public_api';
 import { AsyncValidatorFn, FormGroup, ValidatorFn } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 
 export interface NvGridConfig {
   url?: NvUrlConfig;
   gridName: string;
-  title?: Object | string;
+  title?: object | string;
   paging?: NvPagination;
   sortBy?: string;
   isSortAscending?: boolean;
@@ -58,8 +58,8 @@ export interface NvUrlConfig {
 
 export interface NvColumnConfig {
   key: string;
-  title?: Object | string;
-  tooltip?: Object | string;
+  title?: object | string;
+  tooltip?: object | string;
   customTooltip?: (row: any) => any;
   dataType?: NvColumnDataType;
   decimalDigitsInfo?: string;
@@ -141,10 +141,10 @@ export interface NvFilterType {
 export type PagingSize = 3 | 10 | 25 | 50 | 100;
 
 export interface NvButton {
-  name?: Object | string;
+  name?: object | string;
   icon: string;
-  tooltip?: Object | string;
-  description: Object | string;
+  tooltip?: object | string;
+  description: object | string;
   func: (row: any, rowIndex: number) => any;
   hidden?: boolean | ((row: any) => boolean);
   disabled?: boolean | ((row: any) => boolean);
@@ -153,7 +153,7 @@ export interface NvButton {
 }
 
 export interface NvFooter {
-  label?: Object | string;
+  label?: object | string;
   operation?: NvOperation | ((rows: any[]) => any);
   disableCustomFormat?: boolean;
 }
@@ -164,10 +164,10 @@ export interface NvExpandedRowEvent {
 }
 
 export interface NvToolbarButton {
-  title?: Object | string;
-  tooltip?: Object | string;
+  title?: object | string;
+  tooltip?: object | string;
   icon: string;
-  func?: NvAction | ((any: any) => any);
+  func?: NvAction | ((row: any) => any);
   disabled?: () => boolean;
   hidden?: () => boolean;
   class?: string;
@@ -223,7 +223,7 @@ export class NvGridConstants {
   // tslint:enable:max-line-length
   static readonly DEFAULT_ROW_HEIGHT = NvRowHeight.midSize;
   static readonly TOOLBAR_HEIGHT = 46;
-  static readonly HEADER_HEIGHT = 26;
+  static readonly HEADER_HEIGHT = 40;
   static readonly FILTER_HEIGHT = 24;
   static readonly FOOTER_HEIGHT = 22;
   static readonly PAGINATION_HEIGHT = 36;

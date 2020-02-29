@@ -19,7 +19,6 @@
   -webkit-user-drag: none;
   text-overflow: ellipsis;
   white-space: nowrap;
-  border: #d7d7d7 ridge 0.2px;
   vertical-align: middle;
   cursor: default;
   overflow: hidden;

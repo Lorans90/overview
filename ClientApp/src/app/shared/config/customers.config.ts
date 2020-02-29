@@ -3,8 +3,8 @@ import {
     NvFilterControl,
     NvGridButtonsPosition,
     NvGridConfig,
-    NvGridRowSelectionType,
-    NvOperation
+    NvOperation,
+    NvRowHeight
 } from 'nv-grid/src/public_api';
 import { Customer } from '../models/customer.model';
 import { FormGroup, Validators } from '@angular/forms';
@@ -26,8 +26,8 @@ export const customersGridConfig = (actions?: {
     disableDragAndDrop: false,
     disableHideColumns: false,
     disableSortColumns: false,
-    pinFirstRow: true,
     isSortAscending: false,
+    rowHeight: NvRowHeight.largeSize,
     sortBy: 'customerNo',
     editForm: {
         allowCreateNewRow: true,

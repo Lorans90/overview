@@ -17,17 +17,21 @@ export class UserService {
         @Inject(APP_CONFIG) private appConfig: IAppConfig
     ) { }
 
-    addUser(user: User): Observable<{} | User> {
-        return this.http.post<{} | User>(`${this.appConfig.apiEndpoint}/users/${user.id}`, user);
+    getUsers(): Observable<User[]> {
+        return this.http.post<User[]>(`${this.appConfig.apiEndpoint}/users`, {});
     }
 
-    updateUser(user: User): Observable<{} | User> {
-        return this.http.put<{} | User>(`${this.appConfig.apiEndpoint}/users/${user.id}`, user);
+    addUser(user: User): Observable<User> {
+        return this.http.post<User>(`${this.appConfig.apiEndpoint}/users/${user.id}`, user);
+    }
+
+    updateUser(user: User): Observable<User> {
+        return this.http.put<User>(`${this.appConfig.apiEndpoint}/users/${user.id}`, user);
 
     }
 
-    getUser(userId: number): Observable<{} | User> {
-        return this.http.get<{} | User>(`${this.appConfig.apiEndpoint}/users/${userId}`);
+    getUser(userId: number): Observable<User> {
+        return this.http.get<User>(`${this.appConfig.apiEndpoint}/users/${userId}`);
     }
 
     changePassword(model: ChangePassword): Observable<any> {
