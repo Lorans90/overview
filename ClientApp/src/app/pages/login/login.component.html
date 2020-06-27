@@ -7,20 +7,22 @@
   </div>
   <form [formGroup]="form">
     <input
-      formControlName="username"
       type="text"
+      formControlName="username"
+      nzSize="small"
       nz-input
     >
     <input
-      formControlName="password"
       type="password"
+      formControlName="password"
+      nzSize="small"
       nz-input
       autocomplete="off"
     >
     <button
-      nz-button
       [disabled]="!form.valid"
       (click)="login()"
+      nz-button
     >
       <i
         nz-icon
@@ -28,6 +30,16 @@
       ></i>
       Login
     </button>
+
+
+
+
+
+
+
+
+
+
 
 
   </form>

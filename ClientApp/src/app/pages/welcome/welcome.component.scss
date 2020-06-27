@@ -1,14 +1,13 @@
 .menu-sidebar {
   position: relative;
   z-index: 10;
-  box-shadow: 2px 0 6px rgba(0, 21, 41, .35);
+  box-shadow: 2px 0 6px rgba(0, 21, 41, 0.35);
 }
 
 .trigger {
   font-size: 30px;
   cursor: pointer;
-  transition: all .3s,
-    padding 0s;
+  transition: all 0.3s, padding 0s;
 }
 
 .trigger:hover {
@@ -22,7 +21,7 @@
   overflow: hidden;
   line-height: 64px;
   background: #001529;
-  transition: all .3s;
+  transition: all 0.3s;
 }
 
 .sidebar-logo img {
@@ -54,7 +53,7 @@ nz-header {
   height: 64px;
   padding: 0;
   background: #fff;
-  box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
 }
 
 .layout {
@@ -91,7 +90,7 @@ nz-header {
 }
 
 .language a.transparent {
-  color: #001529
+  color: #001529;
 }
 
 .right a.logout {
@@ -102,14 +101,15 @@ nz-header {
 
 .time {
   color: white;
-  top: 100%;
-  position: sticky;
+  font-size: 13px;
+  padding: 4px;
+  position: absolute;
+  bottom: 48px;
 }
 
 li.active {
   background-color: #004280 !important;
   border-right: 6px #0084ff solid !important;
-
 }
 
 .ant-menu.ant-menu-dark .ant-menu-item-selected,

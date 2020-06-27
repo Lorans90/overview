@@ -1,12 +1,11 @@
-import { Injectable, Inject } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { HttpClient, HttpResponse, HttpHeaders } from '@angular/common/http';
-import { map, tap, shareReplay } from 'rxjs/operators';
-import { IAppConfig, APP_CONFIG, ApiConfigService } from 'src/app/core';
-import { Tokens } from '../models/tokens.model';
-import { User } from '../models/user.model';
-import { LoginUser } from '../models/login-user.model';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
+import { ApiConfigService, APP_CONFIG, IAppConfig } from 'src/app/core';
+import { LoginUser } from '../models/login-user.model';
+import { Tokens } from '../models/tokens.model';
 
 @Injectable({
     providedIn: 'root'

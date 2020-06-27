@@ -6,8 +6,8 @@
       *ngFor="let todo of todos; let index=index"
     >
       <label
-        nz-checkbox
         [ngModel]="index % 2 === 0"
+        nz-checkbox
       ></label>
       <div class="label">
         <b class="title">{{ todo.title }}</b>

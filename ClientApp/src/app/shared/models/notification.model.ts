@@ -1,5 +1,5 @@
-import { Wording } from './wording.model';
 import { NotificationType } from '../enums/notification.enum';
+import { Wording } from './wording.model';
 
 export interface Notification {
     type: NotificationType;

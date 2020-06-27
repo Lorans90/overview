@@ -1,4 +1,7 @@
-<nv-grid
-  [dataSource]="[]"
-  [gridConfig]="gridConfig"
-></nv-grid>
+<im-grid
+    [columns]="columns"
+    [dataSource$]="users$"
+    (created)="created($event)"
+    (updated)="updated($event)"
+>
+</im-grid>

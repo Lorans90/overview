@@ -1,20 +1,20 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { of } from 'rxjs';
+import { columns } from 'src/app/shared/config/customers.config';
 import { customers } from 'src/data/customers';
-import { customersGridConfig } from 'src/app/shared/config/customers.config';
 
 @Component({
-  selector: 'app-overview',
-  templateUrl: './overview.component.html',
-  styleUrls: ['./overview.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-overview',
+    templateUrl: './overview.component.html',
+    styleUrls: ['./overview.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OverviewComponent implements OnInit {
 
-  dataSource = customers;
-  gridConfig = customersGridConfig();
-  constructor() { }
+    dataSource$ = of(customers);
+    columns = columns;
+    constructor() { }
 
-  ngOnInit() {
-  }
-
+    ngOnInit() {
+    }
 }

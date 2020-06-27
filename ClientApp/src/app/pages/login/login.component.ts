@@ -1,9 +1,9 @@
-import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { wording } from 'src/app/core/wording';
-import { AuthService } from 'src/app/shared/services/auth.service';
 import { Tokens } from 'src/app/shared/models/tokens.model';
+import { AuthService } from 'src/app/shared/services/auth.service';
 
 /**
  * Test Comment For Docs
