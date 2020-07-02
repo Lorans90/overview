@@ -2,11 +2,10 @@
   <nz-layout>
     <nz-sider
       class="menu-sidebar"
+      [(nzCollapsed)]="isCollapsed"
       nzCollapsible
       nzWidth="256px"
       nzBreakpoint="md"
-      [(nzCollapsed)]="isCollapsed"
-      [nzTrigger]="null"
     >
       <div class="sidebar-logo">
         <a>
@@ -17,15 +16,15 @@
         </a>
       </div>
       <ul
+        [nzInlineCollapsed]="isCollapsed"
         nz-menu
         nzTheme="dark"
         nzMode="inline"
-        [nzInlineCollapsed]="isCollapsed"
       >
         <li
+          [nzTitle]="wording.dashboard | translate"
           nz-submenu
           nzOpen
-          [nzTitle]="wording.dashboard | translate"
           nzIcon="dashboard"
         >
           <ul>
@@ -68,9 +67,9 @@
           </ul>
         </li>
         <li
+          [nzTitle]="wording.account | translate"
           nz-submenu
           nzOpen
-          [nzTitle]="wording.account | translate"
           nzIcon="form"
         >
           <ul>
@@ -90,10 +89,12 @@
         </li>
 
 
+
+
         <li
+          [nzTitle]="wording.users | translate"
           nz-submenu
           nzOpen
-          [nzTitle]="wording.users | translate"
           nzIcon="team"
         >
           <ul>
@@ -121,27 +122,27 @@
         <div class="app-header">
           <i
             class="trigger"
-            nz-icon
             [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
             (click)="isCollapsed = !isCollapsed"
+            nz-icon
           ></i>
           <div class="right">
             <app-notification-logs
+              [logType]="LogType.error"
               [title]="wording.errors | translate"
               notificationColor="red"
               icon="close"
-              [logType]="LogType.error"
             ></app-notification-logs>
             <app-notification-logs
+              [logType]="LogType.warning"
               [title]="wording.warnings | translate"
               notificationColor="orange"
               icon="warning"
-              [logType]="LogType.warning"
             ></app-notification-logs>
             <app-notification-logs
-              icon="bell"
-              [title]="wording.notifications | translate"
               [logType]="LogType.notification"
+              [title]="wording.notifications | translate"
+              icon="bell"
             ></app-notification-logs>
             <div class="language">
               <a
@@ -171,10 +172,10 @@
                   ></button> -->
             </div>
             <a
-              routerLink="/login"
-              routerLinkActive="active"
               class="logout"
               (click)="logout()"
+              routerLink="/login"
+              routerLinkActive="active"
             >
               <i
                 nz-icon

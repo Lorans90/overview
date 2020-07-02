@@ -33,6 +33,7 @@
               }
             ],
             "styles": [
+              "node_modules/ng-zorro-antd/resizable/style/entry.less",
               "src/theme.less",
               "src/styles.scss"
             ],
@@ -40,10 +41,12 @@
           },
           "configurations": {
             "production": {
-              "fileReplacements": [{
-                "replace": "src/environments/environment.ts",
-                "with": "src/environments/environment.prod.ts"
-              }],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
@@ -53,11 +56,13 @@
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
-              "budgets": [{
-                "type": "initial",
-                "maximumWarning": "2mb",
-                "maximumError": "5mb"
-              }]
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
             }
           }
         },
@@ -118,68 +123,6 @@
             "production": {
               "devServerTarget": "overview:serve:production"
             }
-          }
-        }
-      }
-    },
-    "nv-grid": {
-      "root": "projects/nv-grid",
-      "sourceRoot": "projects/nv-grid/src",
-      "projectType": "library",
-      "prefix": "nv",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
-          "options": {
-            "tsConfig": "projects/nv-grid/tsconfig.lib.json",
-            "project": "projects/nv-grid/ng-package.json"
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/nv-grid/src/test.ts",
-            "tsConfig": "projects/nv-grid/tsconfig.spec.json",
-            "karmaConfig": "projects/nv-grid/karma.conf.js"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/nv-grid/tsconfig.lib.json",
-              "projects/nv-grid/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
-        }
-      }
-    },
-    "nv-button": {
-      "root": "projects/nv-button",
-      "sourceRoot": "projects/nv-button/src",
-      "projectType": "library",
-      "prefix": "nv",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
-          "options": {
-            "tsConfig": "projects/nv-button/tsconfig.lib.json",
-            "project": "projects/nv-button/ng-package.json"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/nv-button/tsconfig.lib.json",
-              "projects/nv-button/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         }
       }

@@ -3,8 +3,6 @@ import { GridsterConfig, GridsterItem } from 'angular-gridster2';
 import { wording } from 'src/app/core/wording';
 import { WidgetType } from '../../enums/widgets.enum';
 
-
-
 @Component({
     selector: 'app-grid',
     templateUrl: './grid.component.html',

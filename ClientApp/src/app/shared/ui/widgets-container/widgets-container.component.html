@@ -8,13 +8,13 @@
 ></app-chart>
 <app-feed *ngIf="item.type === WidgetType.Feed"></app-feed>
 <div
-  *ngIf="editMode"
   class="overlay"
+  *ngIf="editMode"
 >
   <button
+    (click)="deleteWidget.emit()"
     nz-button
     nzType="default"
-    (click)="deleteWidget.emit()"
   >
     <i
       nz-icon

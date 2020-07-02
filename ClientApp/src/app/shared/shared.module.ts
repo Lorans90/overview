@@ -1,8 +1,7 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { NvGridModule, GRID_GLOBAL_CONFIG, FAKE_GridGlobalConfig } from 'nv-grid/src/public_api';
 import { CommonModule, CurrencyPipe, DecimalPipe, DatePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgZorroAntdModule, NZ_I18N, de_DE } from 'ng-zorro-antd';
+import { NZ_I18N, de_DE } from 'ng-zorro-antd';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { TranslatePipe } from './pipes/translate.pipe';
@@ -22,6 +21,8 @@ import { NotificationLogsComponent } from './ui/notification-logs/notification-l
 import { GoogleChartsModule } from 'angular-google-charts';
 import { UnsavedChangesGuard } from './guards/unsaved-changes.guard';
 import { TodoWidgetComponent } from './ui/todo/todo-widget.component';
+import { ImGridModule } from '@lorenzhh/im-grid';
+import { NgZorroAntdModule } from './module/ng-zorro-antd.module';
 
 @NgModule({
     declarations: [
@@ -43,14 +44,12 @@ import { TodoWidgetComponent } from './ui/todo/todo-widget.component';
         ReactiveFormsModule,
         NgZorroAntdModule,
         RouterModule,
-        NgZorroAntdModule,
         HttpClientModule,
+        ImGridModule,
         GoogleChartsModule.forRoot(),
-        NvGridModule.forRoot({ language: 'en' }),
     ],
 
     exports: [
-        NvGridModule,
         CommonModule,
         GoogleChartsModule,
         GridsterModule,
@@ -60,12 +59,13 @@ import { TodoWidgetComponent } from './ui/todo/todo-widget.component';
         TranslatePipe,
         DateFormatPipe,
         GridComponent,
+        ImGridModule,
         NotificationLogsComponent
     ]
 })
 
 export class SharedModule {
-    static forRoot(): ModuleWithProviders {
+    static forRoot(): ModuleWithProviders<SharedModule> {
         return {
             ngModule: SharedModule,
             providers: [

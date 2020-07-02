@@ -1,10 +1,10 @@
-import { Component, ChangeDetectionStrategy, OnInit, Input } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { NotificationLogsService } from '../../services/notification-logs.service';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { wording } from 'src/app/core/wording';
 import { Log, LogType } from '../../models/log.model';
+import { NotificationLogsService } from '../../services/notification-logs.service';
 import { SettingsService } from '../../services/settings.service';
-import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-notification-logs',

@@ -6,11 +6,9 @@ export interface User {
     displayName: string;
     title: string;
     isActive: boolean;
-    lastLoggedIn: string;
+    lastLoggedIn?: string;
     tel: string;
     eMail: string;
     location: string;
-    userRoles: string;
     roles: Role[];
 }
-

@@ -1,8 +1,8 @@
 <button
-  nz-button
-  nz-dropdown
   [nzDropdownMenu]="menu"
   [nzTrigger]="'click'"
+  nz-button
+  nz-dropdown
   nzPlacement="bottomLeft"
 >
   <i
@@ -14,24 +14,24 @@
 <nz-dropdown-menu #menu="nzDropdownMenu">
   <ul nz-menu>
     <li
-      nz-menu-item
-      *ngFor="let machine of machines"
       (click)="choose(machine)"
+      *ngFor="let machine of machines"
+      nz-menu-item
     >
       <i
-        nz-icon
         [nzType]="'box-plot'"
+        nz-icon
       ></i>
       {{ machine.name }}
     </li>
   </ul>
 </nz-dropdown-menu>
 <google-chart
-  *ngIf="current"
-  #googlechart
-  [title]="chart.title"
-  [type]="chart.type"
   [data]="chart.data"
   [options]="chart.options"
+  [title]="chart.title"
+  [type]="chart.type"
+  *ngIf="current"
+  #googlechart
 >
 </google-chart>

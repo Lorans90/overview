@@ -15,17 +15,19 @@
   #grid
 >
   <gridster-item
-    *ngFor="let item of items"
-    [item]="item"
     [id]="'widget-'+ item.id"
+    [item]="item"
+    *ngFor="let item of items"
   >
     <app-widgets-container
-      [item]="item"
       [editMode]="editMode"
+      [item]="item"
       (deleteWidget)="deleteWidget.emit(item)"
     >
     </app-widgets-container>
   </gridster-item>
+
+
 
 
 

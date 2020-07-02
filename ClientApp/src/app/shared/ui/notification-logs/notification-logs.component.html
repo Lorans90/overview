@@ -1,13 +1,13 @@
 <div
-  nz-popover
-  [nzPopoverTitle]="title"
-  nzOverlayClassName="logs"
   class="notifications"
-  [nzContent]="logsList"
-  nzPopoverPlacement="bottomRight"
-  (nzVisibleChange)="popoverVisibilityChanged($event)"
-  nzTrigger="click"
   [(nzVisible)]="visible"
+  [nzPopoverContent]="logsList"
+  [nzPopoverTitle]="title"
+  [nzPopoverTrigger]="'click'"
+  (nzVisibleChange)="popoverVisibilityChanged($event)"
+  nz-popover
+  nzOverlayClassName="logs"
+  nzPopoverPlacement="bottomRight"
 >
   <nz-badge
     [nzCount]="unseenCount$ | async"
@@ -19,42 +19,56 @@
   }"
   >
     <i
-      nz-icon
-      [nzType]="icon"
       class="notification-icon"
+      [nzType]="icon"
+      nz-icon
     ></i>
   </nz-badge>
 </div>
 
 
 
+
+
+
+
+
+
 <ng-template #logsList>
-  <div class='fb popover-content'>
+  <div class="fb popover-content">
     <div
-      class='fb'
+      class="fb"
       *ngIf="!(logs | async)?.length"
       style="height: 200px; align-items: center; justify-content: center;"
     >
       There are currently no notifications for you.
     </div>
     <div
-      *ngFor="let log of logs | async"
       class="notification"
+      [ngClass]="{'unseen-notification': log.unseen}"
+      *ngFor="let log of logs | async"
       nz-row
       nzType="flex"
       nzJustify="start"
       nzAlign="middle"
-      [ngClass]="{'unseen-notification': log.unseen}"
     >
 
 
 
-      <div class='fb avatar-wrapper'>
+
+
+
+
+
+
+      <div class="fb avatar-wrapper">
         <!-- <nv-mini-avatar [user]="log.user"></nv-mini-avatar> -->
       </div>
-      <div class='fb content'>
-        <div class='fb extra-info'>
-          <div class='fb date'>{{ log.date | date: ((settingsService.locale | async) | dateFormat) }}</div>
+      <div class="fb content">
+        <div class="fb extra-info">
+          <div class="fb date">
+            {{ log.date | date: ((settingsService.locale | async) | dateFormat) }}
+          </div>
         </div>
         <div
           class="fb message"

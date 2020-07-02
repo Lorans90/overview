@@ -18,20 +18,6 @@
       "es2018",
       "dom"
     ],
-    "paths": {
-      "nv-grid": [
-        "./projects/nv-grid/"
-      ],
-      "nv-grid/*": [
-        "./projects/nv-grid/*"
-      ],
-      "nv-button": [
-        "./projects/nv-button/"
-      ],
-      "nv-button/*": [
-        "./projects/nv-button/*"
-      ]
-    }
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

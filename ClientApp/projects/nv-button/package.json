@@ -1,8 +1,0 @@
-{
-  "name": "nv-button",
-  "version": "0.0.7",
-  "peerDependencies": {
-    "@angular/common": "^8.0.0",
-    "ng-zorro-antd": "^8.3.1"
-    }
-}

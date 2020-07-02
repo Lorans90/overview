@@ -1,18 +1,18 @@
 <app-grid
-  [options]="options"
-  [items]="dashboardWidgetItems | async"
   [editMode]="editMode | async"
+  [items]="dashboardWidgetItems | async"
+  [options]="options"
   (deleteWidget)="deleteWidget($event)"
 ></app-grid>
 <div class="edit-save-buttons">
   <button
-    nz-button
-    nz-dropdown
+    [disabled]="(editMode | async)"
     [nzDropdownMenu]="menu"
     [nzTrigger]="'click'"
+    nz-button
+    nz-dropdown
     nzPlacement="bottomRight"
     nzType="default"
-    [disabled]="(editMode | async)"
   >
     <i
       nz-icon
@@ -22,28 +22,28 @@
   <nz-dropdown-menu #menu="nzDropdownMenu">
     <ul nz-menu>
       <li
-        nz-menu-item
-        *ngFor="let widgetListItem of widgetsList"
-        (click)="addWidget(widgetListItem.type)"
         [attr.data-widget-item]="widgetListItem.name"
+        (click)="addWidget(widgetListItem.type)"
+        *ngFor="let widgetListItem of widgetsList"
+        nz-menu-item
       >
         <i
-          nz-icon
           [nzType]="widgetListItem.icon"
+          nz-icon
         ></i>
         {{ widgetListItem.name }}
       </li>
     </ul>
   </nz-dropdown-menu>
   <button
+    [id]="(editMode | async) ? 'save-btn': 'edit-btn'"
+    (click)="toggleGrid()"
     nz-button
     nzType="default"
-    (click)="toggleGrid()"
-    [id]="(editMode | async) ? 'save-btn': 'edit-btn'"
   >
     <i
-      nz-icon
       [nzType]="(editMode | async) ? 'save': 'edit'"
+      nz-icon
     ></i>
   </button>
 </div>

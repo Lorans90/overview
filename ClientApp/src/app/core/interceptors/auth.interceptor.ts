@@ -1,28 +1,44 @@
+import {
+    HttpEvent,
+    HttpEventType,
+    HttpHandler,
+    HttpInterceptor,
+    HttpRequest
+} from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { HttpEvent, HttpInterceptor, HttpHandler, HttpEventType, HttpRequest } from '@angular/common/http';
-import { Observable, BehaviorSubject, of, throwError } from 'rxjs';
-import { skipWhile, catchError, switchMap, filter, take, finalize } from 'rxjs/operators';
-import { AuthService } from 'src/app/shared/services/auth.service';
 import { Router } from '@angular/router';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import {
+    catchError,
+    filter,
+    finalize, skipWhile,
+    switchMap,
+    take
+} from 'rxjs/operators';
+import { AuthService } from 'src/app/shared/services/auth.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
     private isRefreshing = false;
-    private isRefreshTokenReadySubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    private isRefreshTokenReadySubject: BehaviorSubject<
+        boolean
+    > = new BehaviorSubject<boolean>(false);
 
-    constructor(
-        private authService: AuthService,
-        private router: Router
-    ) { }
+    constructor(private authService: AuthService, private router: Router) { }
 
-    intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    intercept(
+        request: HttpRequest<any>,
+        next: HttpHandler
+    ): Observable<HttpEvent<any>> {
         return next.handle(this.addHeaders(request)).pipe(
-            skipWhile((event: HttpEvent<any>) => event && event.type === HttpEventType.Sent),
+            skipWhile(
+                (event: HttpEvent<any>) => event && event.type === HttpEventType.Sent
+            ),
             catchError((response) => {
-                if (response.status === 401 && !response.error) {
+                if (response.status === 401) {
                     if (this.isRefreshing) {
                         return this.isRefreshTokenReadySubject.pipe(
-                            filter(result => result !== false),
+                            filter((result) => result !== false),
                             take(1),
                             switchMap(() => next.handle(this.addHeaders(request)))
                         );
@@ -33,14 +49,12 @@ export class AuthInterceptor implements HttpInterceptor {
                             catchError((error) => {
                                 this.authService.forceLogout();
                                 return throwError(error);
-                            }
-                            ),
+                            }),
                             switchMap(() => {
                                 this.isRefreshTokenReadySubject.next(true);
                                 return next.handle(this.addHeaders(request));
-
                             }),
-                            finalize(() => this.isRefreshing = false),
+                            finalize(() => (this.isRefreshing = false)),
                             catchError((error) => {
                                 this.authService.forceLogout();
                                 return throwError(error);
@@ -49,7 +63,6 @@ export class AuthInterceptor implements HttpInterceptor {
                     }
                 }
                 return throwError(response);
-
             })
         );
     }
@@ -58,7 +71,10 @@ export class AuthInterceptor implements HttpInterceptor {
         const tokens = this.authService.getTokens();
         return tokens
             ? request.clone({
-                headers: request.headers.set('Authorization', `Bearer ${tokens.accessToken}`)
+                headers: request.headers.set(
+                    'Authorization',
+                    `Bearer ${tokens.accessToken}`
+                ),
             })
             : request;
     }

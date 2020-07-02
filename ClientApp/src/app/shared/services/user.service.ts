@@ -1,28 +1,31 @@
-import { Injectable, Inject } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { User } from '../models/user.model';
 import { map } from 'rxjs/operators';
-import { ChangePassword } from '../models/change-password.model';
 import { APP_CONFIG, IAppConfig } from '../../core';
+import { ChangePassword } from '../models/change-password.model';
+import { User } from '../models/user.model';
 
+const httpOptions = {
+    headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+    })
+};
 @Injectable({
     providedIn: 'root'
 })
 export class UserService {
-
-
     constructor(
         private http: HttpClient,
         @Inject(APP_CONFIG) private appConfig: IAppConfig
     ) { }
 
     getUsers(): Observable<User[]> {
-        return this.http.post<User[]>(`${this.appConfig.apiEndpoint}/users`, {});
+        return this.http.post<User[]>(`${this.appConfig.apiEndpoint}/Users/GetUsers`, {})
     }
 
     addUser(user: User): Observable<User> {
-        return this.http.post<User>(`${this.appConfig.apiEndpoint}/users/${user.id}`, user);
+        return this.http.post<User>(`${this.appConfig.apiEndpoint}/Users`, user);
     }
 
     updateUser(user: User): Observable<User> {
@@ -32,6 +35,10 @@ export class UserService {
 
     getUser(userId: number): Observable<User> {
         return this.http.get<User>(`${this.appConfig.apiEndpoint}/users/${userId}`);
+    }
+
+    getRoles() {
+        return this.http.get<User>(`${this.appConfig.apiEndpoint}/Users/GetRoles`);
     }
 
     changePassword(model: ChangePassword): Observable<any> {
