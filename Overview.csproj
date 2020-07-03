@@ -31,8 +31,8 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.0" />
         <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-        <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
-        <PackageReference Include="Microsoft.Azure.SignalR" Version="1.1.1" />
+        <!-- <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" /> -->
+        <!-- <PackageReference Include="Microsoft.Azure.SignalR" Version="1.1.1" /> -->
         <PackageReference Include="Hellang.Middleware.ProblemDetails" Version="4.0.0" />
     </ItemGroup>
 

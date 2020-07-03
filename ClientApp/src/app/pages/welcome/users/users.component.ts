@@ -16,7 +16,7 @@ export class UsersComponent implements OnInit {
   constructor(private userService: UserService) { }
 
   ngOnInit() {
-    this.users$ = of([]);
+    this.users$ = this.userService.getUsers();
   }
 
   created(changeEvent: ChangeEvent) {
@@ -24,21 +24,29 @@ export class UsersComponent implements OnInit {
     const user = changeEvent.row;
 
     user.id = 0;
-    user.roles = [{ id: 2 }];
-
     this.userService.addUser(user).subscribe(
       (response) => {
-        console.log(response);
-        changeEvent.track.next(response);
+        changeEvent.track.next({
+          data: response,
+          action: changeEvent.action
+        });
       },
-      (error) => changeEvent.track.next(false)
+      (error) => changeEvent.track.next({
+        data: false,
+        action: changeEvent.action
+      })
     );
   }
 
   updated(changeEvent: ChangeEvent) {
     this.userService.updateUser(changeEvent.row).subscribe(
-      (response) => changeEvent.track.next(response),
-      (error) => changeEvent.track.next(false)
-    );
+      (response) => changeEvent.track.next({
+        data: response,
+        action: changeEvent.action
+      }),
+      (error) => changeEvent.track.next({
+        data: false,
+        action: changeEvent.action
+      }));
   }
 }

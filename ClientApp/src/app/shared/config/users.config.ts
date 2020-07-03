@@ -1,5 +1,6 @@
 import { ImColumn, ImFieldType, ChildTableComponent, ImColumnType } from '@lorenzhh/im-grid';
 import { Validators } from '@angular/forms';
+import { Role } from '../models/role.model';
 
 export const columns: ImColumn[] = [
     {
@@ -25,7 +26,8 @@ export const columns: ImColumn[] = [
     {
         key: 'isActive',
         title: 'isActive',
-        columnType: ImColumnType.Boolean
+        columnType: ImColumnType.Boolean,
+        defaultValue: true
     },
     {
         key: 'lastLoggedIn',
@@ -41,7 +43,6 @@ export const columns: ImColumn[] = [
     {
         key: 'eMail',
         title: 'eMail',
-        validators: [Validators.required]
     },
     {
         key: 'location',
@@ -50,23 +51,16 @@ export const columns: ImColumn[] = [
     {
         key: 'roles',
         title: 'Roles',
-        childrenConfig: {
-            columns: [
+        columnType: ImColumnType.Array,
+        selectValues: [
+            { id: 1, name: 'admin' },
+            { id: 2, name: 'user' }
+        ],
 
-                {
-                    key: 'id',
-                    title: 'Id',
-                    isUnique: true
-                },
-                {
-                    key: 'name',
-                    title: 'Role Name',
-                },
-            ],
-            componentConfig: {
-                componentToPort: ChildTableComponent
-            }
-        },
-        selectValues: ['Admin', 'User'],
+        labelProperty: 'name',
+        valueProperty: 'id',
+        multiSelect: true,
+        compareFn: (o1: Role, o2: Role) => o1 && o2 ? o1.id === o2.id : o1 === o2,
+        validators: [Validators.required],
     },
 ];

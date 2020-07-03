@@ -43,6 +43,12 @@ namespace Overview.Controllers.Users
 
 		}
 		
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetUsers()
+        {
+            var users = await usersService.GetAllUsers();
+            return Ok(users);
+        }
 		[HttpPut("{userId}")]
 		public async Task<IActionResult> UpdateUser(int userId, SaveUserResource saveUserResource)
 		{
