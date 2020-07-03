@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ namespace Overview.Services
 {
     public interface IUsersService
     {
+        Task<List<UserResource>> GetAllUsers();
         Task<string> GetSerialNumberAsync(int userId);
         Task<User> FindUserAsync(string username, string password);
         Task<User> FindUserAsync(int userId);
@@ -213,7 +215,12 @@ namespace Overview.Services
             await _uow.SaveChangesAsync();
             return true;
         }
-
+        public async Task<List<UserResource>> GetAllUsers()
+        {
+            return await _users.Include(u => u.UserRoles).ThenInclude(ur => ur.Role)
+                               .Select(u => mapper.Map<User, UserResource>(u))
+                               .ToListAsync();
+        }
 
 
     }

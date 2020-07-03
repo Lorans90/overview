@@ -20,10 +20,9 @@ export class UserService {
         @Inject(APP_CONFIG) private appConfig: IAppConfig
     ) { }
 
-    getUsers(): Observable<User[]> {
-        return this.http.post<User[]>(`${this.appConfig.apiEndpoint}/Users/GetUsers`, {})
+    getUsers() {
+        return this.http.get<User[]>(`${this.appConfig.apiEndpoint}/Users/GetUsers`);
     }
-
     addUser(user: User): Observable<User> {
         return this.http.post<User>(`${this.appConfig.apiEndpoint}/Users`, user);
     }

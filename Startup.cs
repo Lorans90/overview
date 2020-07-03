@@ -119,8 +119,8 @@ namespace Overview
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             // services.AddProblemDetails();
             services.AddAutoMapper(typeof(Startup));
-            services.AddSignalR()
-                .AddAzureSignalR();
+            // services.AddSignalR()
+            //     .AddAzureSignalR();
 
             services.AddCors(options =>
             {
@@ -151,7 +151,7 @@ namespace Overview
             services.AddScoped<ISecurityService, SecurityService>();
             services.AddScoped<ITokenStoreService, TokenStoreService>();
             services.AddScoped<ITokenValidatorService, TokenValidatorService>();
-            services.AddHostedService<ChartWorker>();
+            // services.AddHostedService<ChartWorker>();
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {
@@ -201,10 +201,10 @@ namespace Overview
             app.UseRouting();
             app.UseCors("CorsPolicy");
             app.UseAuthorization();
-            app.UseAzureSignalR(routes => 
-            { 
-                routes.MapHub<RealTimeHub>("/realtime"); 
-            });
+            // app.UseAzureSignalR(routes => 
+            // { 
+            //     routes.MapHub<RealTimeHub>("/realtime"); 
+            // });
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
